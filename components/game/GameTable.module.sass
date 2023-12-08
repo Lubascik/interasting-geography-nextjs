@@ -1,0 +1,91 @@
+
+.columns
+    display: flex
+    // flex-direction: row
+    flex-flow: row nowrap
+    overflow: hidden
+
+    height: 100%
+    :nth-child(n)
+
+.column
+    // overflow: hidden
+    display: flex
+    flex-flow: column nowrap
+    height: inherit
+    // background-color: #fff
+    width: stretch
+    box-sizing: border-box
+    border-left: 2px
+    border-right: 2px
+    border-bottom: 0px
+    border-top: 0px
+    border-style: dashed
+    border-color: #576574
+    border-image: url("../../images/border-image.png") 1 round
+
+.column:first-child
+    border-left: none
+    .column-footer
+        margin-left: 0px
+    .column-header
+        margin-left: 0px
+    .column-content
+        margin-left: 0px
+
+.column:last-child
+    border-right: none
+    .column-footer
+        margin-right: 0px
+    .column-header
+        margin-right: 0px
+    .column-content
+        margin-right: 0px
+
+$elements: 15
+@for $i from 0 to $elements
+    .column:nth-child(#{$i})
+        background-color: hsl( $i * 30, 80, 40)
+
+.column-header
+    height: 60px
+    width: 100%
+    background-color: black
+    margin-left: -4px
+    padding: 0px 2px
+    background-color: #10AC84
+    display: flex
+    justify-content: center
+    align-items: center
+    .column-title
+        color: white
+        text-align: center
+        font-family: Josefin Slab
+        font-size: 30px
+        font-weight: 700
+        justify-content: center
+.column-content
+
+.column-footer
+    margin-top: auto
+    margin-left: -2px
+
+.column-input
+
+    width: 100%
+    height: 60px
+    background-color: #576574
+    border: none
+    color: white
+    text-align: center
+    font-family: Josefin Slab
+    font-size: 30px
+    font-weight: 700
+    outline-width: 0
+
+.column-input::placeholder
+    color: white
+    text-align: center
+    font-family: Josefin Slab
+    font-size: 30px
+    font-weight: 700
