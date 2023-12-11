@@ -1,0 +1,36 @@
+@import "~include-media/dist/_include-media"
+
+$bg-color: #222F3E
+$prim-color: #576574
+
+// $breakpoints: ('phone': 480px,'tablet': 768px,'desktop': 1500px) !default
+
+@mixin text-sm
+    @include media("<phone")
+        font-size: 0.5em
+    @include media(">phone", "<=tablet")
+        font-size: 0.6em
+    @include media(">tablet", "<=desktop")
+        font-size: 0.8em
+    @include media(">desktop")
+        font-size: 1em
+
+@mixin text-md
+    @include media("<phone")
+        font-size: 0.7em
+    @include media(">phone", "<=tablet")
+        font-size: 0.9em
+    @include media(">tablet", "<=desktop")
+        font-size: 1em
+    @include media(">desktop")
+        font-size: 1.3em
+
+@mixin text-lg
+    @include media("<phone")
+        font-size: 0.8em
+    @include media(">phone", "<=tablet")
+        font-size: 1em
+    @include media(">tablet", "<=desktop")
+        font-size: 1.2em
+    @include media(">desktop")
+        font-size: 1.4em

@@ -1,0 +1,21 @@
+@import "../../pages/game.module.sass"
+
+.timer-container
+        @extend .box-shadow
+        background-color: #576574
+        height: auto
+        display: flex
+        flex-flow: row
+        align-items: center
+        .timer-text
+            @include text-md
+            @extend .text-shadow
+            width: auto
+            margin: 5px auto
+            color: white
+            font-family: Josefin Slab
+            font-weight: 700
+
+        .timer-time
+            @extend .timer-text
+            margin: auto 30px

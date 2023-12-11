@@ -1,0 +1,37 @@
+@import ../../pages/vars.module
+.cell
+    background-color: #C8D6E5
+    height: 40px
+    display: flex
+    flex-direction: row
+    flex-wrap: nowrap
+    overflow: hidden
+    justify-content: space-between
+    box-sizing: border-box
+    border-left: 0px
+    border-right: 0px
+    border-top: 0px
+    border-bottom: 2px
+    border-style: dashed
+    border-color: #576574
+    border-image: url("../../images/border-image.png") 1 round
+
+.cell-text
+    @include text-sm
+    text-overflow: ellipsis
+    word-break: break-word
+    display: -webkit-box
+    overflow: hidden
+    -webkit-box-orient: vertical
+    -webkit-line-clamp: 1
+    margin: auto
+    color: black
+    text-align: center
+    font-family: Josefin Slab
+    font-weight: 700
+    justify-content: center
+
+.cell-points
+    @extend .cell-text
+    margin: auto 10px
+    min-width: 40px

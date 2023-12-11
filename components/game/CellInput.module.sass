@@ -1,0 +1,36 @@
+@import ../../pages/vars.module
+@import ./Cell.module
+
+.input-cell
+    background-color: #C8D6E5
+    height: 40px
+    display: flex
+    flex-direction: row
+    flex-wrap: nowrap
+    justify-content: space-between
+
+.input-cell-text
+    @extend .cell-text
+
+.input-cell-add
+    margin: auto 20px
+    color: #000
+    font-size: 30px
+    font-weight: bolder
+    cursor: pointer
+    background: none
+    border: 1px solid transparent
+
+.input-cell-add:active
+        border: 1px solid black
+
+.input-cell-input
+    @extend .input-cell-text
+    width: 100%
+    height: 100%
+    background: none
+    border: none
+    outline: none
+
+.input-cell:focus-within
+    border-bottom: 3px solid black

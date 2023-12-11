@@ -1,6 +1,7 @@
 
-@use "./vars.sass"
-$margin: 40px
+@import "./vars.module.sass"
+$margin: 20px
+$side-panel-spacing: 10px
 
 .text-shadow
     text-shadow: 0px 4px 0px rgba(0, 0, 0, 0.25)
@@ -27,35 +28,25 @@ $margin: 40px
     height: calc( 100% - $margin*2 )
 
 .main-panel
-    width: strech
+    width: -webkit-fill-available
     box-sizing: border-box
     margin-left: $margin
     border: 5px solid #10AC84
 
 .side-panel
+    min-width: 100px
     width: 277px
     flex-flow: column
+    gap: $side-panel-spacing
     display: flex
 
     .player-container
         height: fit-content
         width: 100%
-        margin-bottom: 40px
-        .player:nth-child(1)
-            background-color: #10AC84
-        .player:nth-child(2)
-            background-color: #EE5253
-        .player:nth-child(3)
-            background-color: #2E86DE
-        .player:nth-child(4)
-            background-color: #FF9F43
-        .player:nth-child(5)
-            background-color: #341F97
-        .player:nth-child(6)
-            background-color: #F368E0
+        // margin-bottom: 40px
         .player
             @extend .box-shadow
-            height: 49px
+            height: 30px
             margin-bottom: 5px
             display: flex
             flex-flow: row
@@ -68,53 +59,56 @@ $margin: 40px
                 align-items: center
                 .status
                     @extend .box-shadow
-                    width: 20px
-                    height: 20px
+                    width: 15px
+                    height: 15px
                     border-radius: 50%
                     margin: 10px
                     background-color: #929292
                 .name
+                    @include text-md
                     @extend .text-shadow
                     color: white
                     font-family: Josefin Slab
                     font-weight: 700
-                    font-size: 35px
             .points
+                @include text-sm
                 @extend .text-shadow
                 color: white
                 font-family: Josefin Slab
                 font-weight: 700
-                font-size: 35px
                 float: right
                 margin-right: 10px
 
-    .letter-container
+    .round-container
         @extend .box-shadow
         background-color: #576574
-        height: 84px
-        margin-bottom: 40px
+        height: auto
+        // margin-bottom: 40px
         display: flex
+        flex-flow: column
         justify-content: center
         align-items: center
-        .letter-text
+        .round-text
+            @include text-md
+            @extend .text-shadow
+            margin: 5px auto
             color: white
             font-family: Josefin Slab
             font-weight: 700
-            font-size: 50px
 
     .chat-container
         @extend .box-shadow
         flex: 1 1 auto
         background-color: #576574
-        margin-bottom: 40px
+        // margin-bottom: 40px
         display: flex
         justify-content: center
         align-items: center
         h1
+            @include text-md
             color: white
             font-family: Josefin Slab
             font-weight: 700
-            font-size: 63px
 
     .side-button-container
         display: flex
@@ -125,9 +119,9 @@ $margin: 40px
         height: fit-content
 
         .side-button
+            @include text-md
             font-family: Josefin Slab
             font-weight: 600
-            font-size: 30px
             line-height: 30px
             align-items: center
             text-align: center
@@ -136,7 +130,7 @@ $margin: 40px
             background-color: #10AC84
             border: none
             margin-top: 10px
-            width: 277px
+            width: 100%
             height: 60px
             justify-self: flex-end
             @extend .text-shadow

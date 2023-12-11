@@ -1,30 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./GameTable.module.sass";
+import CellInput from "./CellInput.jsx";
+import Cell from "./Cell.jsx";
 
-const GameTable = () => {
+const GameTable = ({ gameData, playerData }) => {
+  const [columnValues, setColumnValues] = useState(new Map());
+
+  const setColumnValue = (id, value) => {
+    columnValues.set(id, value)
+    setColumnValues(columnValues)
+  }
+
+  const onSubmitAnswers = ()=> {
+    // check if all columns are submited.
+  }
+
   return (
     <div className={styles["columns"]}>
-      {(() => {
-        const res = [];
-        for (let i = 0; i < 5; i++) {
-          res.push(
-            <div className={styles["column"]}>
+      {
+        gameData.columns.map(column => {
+          return (
+            <div key={column.id} className={styles["column"]}>
               <div className={styles["column-header"]}>
-                <h1 className={styles["column-title"]}>Column</h1>
+                <h1 className={styles["column-title"]}>{column.name}</h1>
               </div>
-              <div className={styles["column-content"]}></div>
-              <div className={styles["column-footer"]}>
-                <input
-                  type="text"
-                  className={styles["column-input"]}
-                  placeholder="Input"
-                />
+              <div className={styles["column-content"]}>
+                {
+                  playerData.data.rows.map(row => {
+                    return row.columns.filter(columnOfRow => columnOfRow.id === column.id).map(columnOfRow => {
+                      return <Cell data={columnOfRow.data} />
+                    })
+                  })
+                }
+                <CellInput key={column.id + "-input"} id={column.id} setValue={setColumnValue}></CellInput>
               </div>
             </div>
-          );
-        }
-        return res;
-      })()}
+          )
+        })
+      }
+      <div key={"column-results"} className={styles["column"]}>
+        <div className={styles["column-header"]}>
+          <h1 className={styles["column-title"]}>Results</h1>
+        </div>
+        <div className={styles["column-content"]}>
+          {
+            playerData.data.rows.map(row => {
+              return <Cell data={row.columns.filter(col => col.id === "results")[0].data} />
+              return <p>{row.columns.filter(col => col.id === "results")[0].data.points}</p>
+            })
+          }
+          {
+            <button onClick={()=>{onSubmitAnswers()}} className={styles["column-button"]}>Submit</button>
+          }
+        </div>
+      </div>
     </div>
   );
 };
