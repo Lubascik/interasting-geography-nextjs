@@ -1,0 +1,55 @@
+@import "./vars.module"
+    
+.loadingScreen-container 
+    width: 100vw
+    height: 100vh
+    background-color: $bg-color
+    display: flex
+    justify-content: center
+    align-items: center
+    color: white
+    h1
+        width: 500px
+        // height: 40px
+        text-align: center
+        margin: auto
+        font-family: Josefin Slab
+        font-weight: 700
+    h2
+        width: 500px
+        // height: 40px
+        text-align: center
+        margin: auto
+        font-family: Josefin Slab
+        font-weight: 500
+
+.loadingScreen-loadingIcon
+    height: 20px
+    margin: 10px
+
+.loadingScreen-loadingIcon::before
+    text-align: center
+
+.loadingScreen-loadingMessageContainer
+    display: flex
+    flex-flow: column
+    justify-content: center
+    align-items: center
+    margin: 10px 0px
+    width: 100%
+
+.loadingScreen-centerContainer
+
+.loadingScreen-loadingBar
+    // justify-content: center
+    width: 100%
+    border: 0px solid black
+    height: 20px
+
+.loadingScreen-progressBar
+    background-color: white
+    height: 100%
+    align-content: center
+    p
+        font-family: Josefin Slab
+        font-weight: 700

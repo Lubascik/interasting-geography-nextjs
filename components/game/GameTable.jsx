@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./GameTable.module.sass";
+import styles from "../../styles/GameTable.module.sass";
 import CellInput from "./CellInput.jsx";
 import Cell from "./Cell.jsx";
 
@@ -27,8 +27,8 @@ const GameTable = ({ gameData, playerData }) => {
               <div className={styles["column-content"]}>
                 {
                   playerData.data.rows.map(row => {
-                    return row.columns.filter(columnOfRow => columnOfRow.id === column.id).map(columnOfRow => {
-                      return <Cell data={columnOfRow.data} />
+                    return row.columns.filter(columnOfRow => columnOfRow.id === column.id).map((columnOfRow, index) => {
+                      return <Cell key={column.id + "-cell-" + index} data={columnOfRow.data} />
                     })
                   })
                 }
@@ -44,13 +44,13 @@ const GameTable = ({ gameData, playerData }) => {
         </div>
         <div className={styles["column-content"]}>
           {
-            playerData.data.rows.map(row => {
-              return <Cell data={row.columns.filter(col => col.id === "results")[0].data} />
-              return <p>{row.columns.filter(col => col.id === "results")[0].data.points}</p>
+            playerData.data.rows.map((row, index) => {
+              return <Cell key={"row" + index} data={row.columns.filter(col => col.id === "results")[0].data} />
+              // return <p>{row.columns.filter(col => col.id === "results")[0].data.points}</p>
             })
           }
           {
-            <button onClick={()=>{onSubmitAnswers()}} className={styles["column-button"]}>Submit</button>
+            <button key={"submitButton"} onClick={()=>{onSubmitAnswers()}} className={styles["column-button"]}>Submit</button>
           }
         </div>
       </div>

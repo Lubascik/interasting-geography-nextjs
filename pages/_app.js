@@ -1,12 +1,16 @@
-import "./global-style.sass";
+import "../styles/global-style.sass";
 
-import React, { useLayoutEffect } from "react";
+import React, { useEffect } from "react";
 
 const _app = ({ Component, pageProps }) => {
-  useLayoutEffect(()=>{
-    screen.orientation.lock("landscape");
-  })
-  return <Component {...pageProps} />;
+  useEffect(() => {
+    if ("onorientationchange" in window) {
+      screen.orientation.lock("landscape");
+    }
+  });
+  return (
+      <Component {...pageProps} />
+  );
 };
 
 export default _app;

@@ -1,0 +1,23 @@
+
+@import "./vars.module.sass"
+$margin: 20px
+
+.main
+    background-color: #222F3E
+    width: 100vw
+    height: 100vh
+    margin: 0
+    display: flex
+
+.container
+    padding: $margin
+    flex-direction: row
+    display: flex
+    width: calc( 100% - $margin*2 )
+    height: calc( 100% - $margin*2 )
+
+.main-panel
+    width: -webkit-fill-available
+    box-sizing: border-box
+    margin-left: $margin
+    border: 5px solid #10AC84

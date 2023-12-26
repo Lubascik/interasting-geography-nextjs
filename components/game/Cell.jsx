@@ -1,4 +1,4 @@
-import styles from "./Cell.module.sass";
+import styles from "../../styles/Cell.module.sass";
 
 export default function Cell({data}) {
     return (

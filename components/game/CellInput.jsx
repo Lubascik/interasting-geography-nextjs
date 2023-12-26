@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import styles from "./CellInput.module.sass";
+import styles from "../../styles/CellInput.module.sass";
 
 export default function CellInput({ id, setValue }) {
     const [showInput, setShowInput] = useState(true)
