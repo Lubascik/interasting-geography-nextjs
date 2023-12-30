@@ -8,21 +8,20 @@
     flex-direction: row
     flex-wrap: nowrap
     justify-content: space-between
+    &:focus-within
+        border-bottom: 3px solid black
 
 .input-cell-text
     @extend .cell-text
 
 .input-cell-add
-    margin: auto 20px
+    margin: auto 0
     color: #000
     font-size: 30px
     font-weight: bolder
     cursor: pointer
     background: none
     border: 1px solid transparent
-
-.input-cell-add:active
-        border: 1px solid black
 
 .input-cell-input
     @extend .input-cell-text
@@ -31,6 +30,3 @@
     background: none
     border: none
     outline: none
-
-.input-cell:focus-within
-    border-bottom: 3px solid black

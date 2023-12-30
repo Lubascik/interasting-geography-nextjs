@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "author": "",
   "license": "ISC",
@@ -16,19 +19,22 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@mui/lab": "^5.0.0-alpha.118",
-    "@mui/material": "^5.11.7",
     "babel-plugin-macros": "^3.1.0",
+    "concurrently": "^8.2.2",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "include-media": "^2.0.0",
-    "next": "^13.1.6",
+    "next": "^14.0.4",
+    "next-connect": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "socket.io": "^4.6.0",
-    "socket.io-client": "^4.6.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
+    "swr": "^2.2.4",
     "uuidv5": "^1.0.0"
   },
   "devDependencies": {
+    "nodemon": "^3.0.2",
     "prettier": "^2.8.3",
     "sass": "^1.69.5"
   }

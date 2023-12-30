@@ -1,0 +1,77 @@
+@import "./vars.module.sass"
+
+$margin: 30px
+    
+.CreateGame-container
+    width: 100vw
+    height: 100vh
+    background-color: $bg-color
+    justify-content: center
+    display: flex
+    align-items: center
+    font-family: Josefin Slab
+    font-weight: 700
+
+.CreateGame-createWindow
+    padding: $margin
+    flex-flow: row
+    display: flex
+    width: calc( 100% - $margin*2 )
+    height: calc( 100% - $margin*2 )
+    border: 1px solid red
+    box-sizing: border-box
+    background-color: $bg-color
+
+.CreataGame-inputContainer
+    @include text-md
+    padding: 5px
+    display: flex
+    flex-flow: row
+    align-items: center
+    margin: 10px
+    justify-content: space-between
+    width: 500px
+    label
+        color: black
+        // align-self: flex-start
+        margin: 0 10px
+        width: 50%
+    input
+        width: -webkit-fill-available
+        box-sizing: border-box
+        // margin: 0 10px
+        &[type="text"]
+            @include text-sm
+            background: none
+            border: none
+            outline: none
+            color: black
+            font-family: Josefin Slab
+            font-weight: 700
+            border-bottom: 3px solid black
+            &:focus-within
+                // border: none
+            &:active
+                // border: none
+        &[type="range"]
+            accent-color: #341F97
+        &[type="submit"]
+            background: none
+            outline: none
+            border: none
+            border-bottom: 3px solid transparent
+            &:active
+                border-bottom: 3px solid black
+    button
+        margin: 0
+
+.CreateGame-createWindow-column
+    display: flex
+    flex-flow: column
+    height: 100%
+    
+
+$elements: 15
+@for $i from 0 to $elements
+    .CreataGame-inputContainer:nth-child(#{$i})
+        background-color: hsl( 100 + $i * 30, 95, 65)
