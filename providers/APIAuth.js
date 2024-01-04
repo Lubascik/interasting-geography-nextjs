@@ -12,6 +12,4 @@ class APIAuth {
   }
 }
 
-const g_APIAuth = new APIAuth();
-
-export default g_APIAuth;
+export default APIAuth

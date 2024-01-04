@@ -36,7 +36,7 @@ const game = ({ params }) => {
     }, [])
 
     const socketInitializer = async () => {
-        await fetch('/api/socket/io');
+        await fetch('/api');
         socket = io()
         
         socket.on('connect', () => {
@@ -45,7 +45,7 @@ const game = ({ params }) => {
         })
         
         socket.on('get-game', data => {
-            setGameData(JSON.parse(data))
+            setGameData(data)
             setIsLoading(false);
         })
     }

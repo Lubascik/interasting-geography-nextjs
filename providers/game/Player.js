@@ -1,12 +1,14 @@
+'use server'
 import uuidv5 from "uuidv5"
 
-const uuidNamespace = "Interasting Geography" 
+const uuidNamespace = "Interasting Geography"
+
 export default class Player {
     uuid = ""
     name
     points
     color
-    status
+    active
     data = {
         rows: []
     }

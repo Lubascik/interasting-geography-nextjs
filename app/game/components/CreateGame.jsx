@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styles from "@styles/CreateGame.module.sass"
+import { createGameRedirect } from './actions'
 
 const CreateGame = ({ lang }) => {
     const playerNum = {
@@ -8,18 +9,31 @@ const CreateGame = ({ lang }) => {
     }
     const [maxPlayers, setMaxPlayers] = useState(playerNum.max)
     const [columns, setColumns] = useState([])
-    
-    function handleSubmit(e) {
-        e.preventDefault();
-        if(!validateNotEmpty()) {
-            return;
-        }
-        const formData = new FormData(e.target)
-        // console.log("Max Players:", formData.get("max-players"));
-        for (const [key, value] of formData) {
-            console.log(key, value);
 
+    async function handleSubmit(e) {
+        e.preventDefault();
+        // if (!validateNotEmpty()) {
+        //     return;
+        // }
+        const formData = new FormData(e.target)
+
+        const data = {
+            maxPlayers: formData.get("max-players"),
+            lobbyName: formData.get("lobby-name"),
+            columns: columns
         }
+
+        const response = await fetch("/api/", {
+            method: "POST",
+            headers: new Headers({ "content-type": "application/json" }),
+            body: JSON.stringify(data),
+        });
+
+        const gameID = await response.json();
+
+        createGameRedirect(gameID)
+        // redirect("/en/"+JsonResponse)
+        // console.log(JsonResponse);
 
     }
 
@@ -41,6 +55,7 @@ const CreateGame = ({ lang }) => {
         if (e.keyCode === 13) {
             e.preventDefault()
             addColumn(e);
+            e.target.value = ""
         }
     }
     function removeCol(index) {
@@ -68,6 +83,15 @@ const CreateGame = ({ lang }) => {
         const inputs = ["game-columns", "max-players", "lobby-name"]
     }
 
+    function limitLength(e) {
+        const maxLengthColumnName = 25
+        e.preventDefault();
+        if (e.target.value.length > maxLengthColumnName) {
+            e.target.value = e.target.value.slice(0, maxLengthColumnName)
+        }
+        return;
+    }
+
     return (
         <form onSubmit={handleSubmit} action="">
             <div className={styles["CreateGame-container"]}>
@@ -88,7 +112,7 @@ const CreateGame = ({ lang }) => {
                     <div className={styles["CreateGame-createWindow-column"]}>
                         <div className={styles['CreataGame-inputContainer']}>
                             <label htmlFor="add-column">Add Column</label>
-                            <input onKeyDown={addColumnKeyDown} type="text"/>
+                            <input onChange={limitLength} onKeyDown={addColumnKeyDown} type="text" />
                         </div>
                         <div>
                             <div className={styles['CreataGame-inputContainer']}>
@@ -96,7 +120,7 @@ const CreateGame = ({ lang }) => {
                             </div>
                             {
                                 (() => {
-                                    const els = [<input name='game-columns' id='game-columns' type="text" style={{display: "none"}} value={columns.join(",")}/>]
+                                    const els = []
                                     columns.forEach((val, index) => {
                                         els.push(
                                             <div key={"gameCol-" + index} className={styles['CreataGame-inputContainer']}>

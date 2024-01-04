@@ -1,7 +1,9 @@
+'use server'
 import Chat from "./Chat";
 import Player from "./Player";
 
 export default class Game {
+  lobbyName = "";
   id = "";
   round = 1;
   currentLetter = "A";
@@ -11,7 +13,17 @@ export default class Game {
   timeLimit = 0;
   allowedLetterList = null;
   players = new Map();
+  maxPlayers = 2;
 
+  /**
+   * 
+   * @param {string} gameID
+   * @param {object} params 
+   * @param {string[]} params.columns 
+   * @param {string} params.lobbyName
+   * @param {number} params.maxPlayers
+   * @param {string} params.allowedLetterList // Optional
+   */
   constructor(gameID, params) {
     this.id = gameID;
     this.columns = params.columns;
@@ -19,6 +31,8 @@ export default class Game {
       this.allowedLetterList = params.allowedLetterList;
     }
     this.getNewLetter();
+    console.log(`A game with id ${gameID} has successfuly been created!`);
+    
   }
 
   getNewLetter() {
@@ -37,17 +51,13 @@ export default class Game {
   }
 
   getAsJSON() {
-    return JSON.stringify(
-      {
-        id: this.id,
-        currentLetter: this.currentLetter,
-        columns: this.columns,
-        round: this.round,
-        timeLimit: this.timeLimit,
-      },
-      null,
-      2
-    );
+    return {
+      id: this.id,
+      currentLetter: this.currentLetter,
+      columns: this.columns,
+      round: this.round,
+      timeLimit: this.timeLimit,
+    };
   }
 
   getOrCreatePlayer(UUID, {name, color}) {
