@@ -2,28 +2,18 @@
 import { useState } from "react";
 import styles from "@styles/CellInput.module.sass";
 
-export default function CellInput({ id, setValue }) {
-    const [showInput, setShowInput] = useState(true)
+export default function CellInput({ id, setValue, nextField }) {
     const [currentValue, setCurrentValue] = useState("")
-    const setData = (event) => {
-        if(event) {
-            event.preventDefault();
-        }
-        setValue(id, currentValue);
-        setShowInput(!showInput);
+    const handleChange = (event) => {
+        const value = event.currentTarget.value.length < 25 ? event.currentTarget.value : currentValue;
+        setCurrentValue(value);
+        setValue(id, value);
     }
     return (
         <div className={styles["input-cell"]}>
-            {
-                showInput &&
-                <form onSubmit={(event) => { event.preventDefault() }} style={{ width: "100%", height: "auto" }}>
-                    <input onKeyDown={(e)=>{if (e.key === 'Enter') {setData()}}} value={currentValue} placeholder="Answer" onChange={(event) => { event.currentTarget.value.length < 25 ? setCurrentValue(event.currentTarget.value) : setCurrentValue(currentValue)}} className={styles["input-cell-input"]} type="text"></input>
-                </form>
-            }
-            {
-                !showInput && <p className={styles["input-cell-text"]}>{currentValue}</p>
-            }
-            <button onClick={setData} className={styles["input-cell-add"]}>{showInput ? "+" : "-"}</button>
+            <div style={{ width: "100%", height: "auto" }}>
+                <input id={id + "-input"} onKeyDown={(e) => { if (e.key === 'Enter') { nextField(id) } }} value={currentValue} autoComplete="off" placeholder="Answer" onChange={handleChange} className={styles["input-cell-input"]} type="text"></input>
+            </div>
         </div>
     )
 }

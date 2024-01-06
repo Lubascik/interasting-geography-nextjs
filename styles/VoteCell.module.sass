@@ -1,0 +1,79 @@
+@import ./vars.module
+.vote-cell
+    background-color: #C8D6E5
+    height: 80px
+    display: flex
+    flex-direction: column
+    flex-wrap: nowrap
+    overflow: hidden
+    // justify-content: center
+    box-sizing: border-box
+    border-left: 0px
+    border-right: 0px
+    border-top: 0px
+    border-bottom: 2px
+    border-style: dashed
+    border-color: #576574
+    border-image: url("../images/border-image.png") 1 round
+
+.vote-cell-text
+    @include text-sm
+    text-overflow: ellipsis
+    word-break: break-word
+    display: -webkit-box
+    overflow: hidden
+    -webkit-box-orient: vertical
+    -webkit-line-clamp: 1
+    margin: auto
+    color: black
+    text-align: center
+    font-family: Josefin Slab
+    font-weight: 700
+    justify-content: center
+
+.vote-cell-input
+    @extend .vote-cell-text
+    width: 100%
+    // background: red
+    button
+        @include text-sm
+        @include main-font
+        font-weight: 700
+        width: 40px
+        height: 40px
+        border-radius: 50%
+        border: 3px solid
+        margin: 2px 4px
+        outline-width: 1px
+        outline-color: black
+        outline-style: solid
+        text-align: center
+        &:nth-child(1)
+            border-color: red
+        &:nth-child(2)
+            border-color: orange
+        &:nth-child(3)
+            border-color: yellow
+        &:nth-child(4)
+            border-color: lime
+        &:active
+            box-shadow: -4px 4px 5px rgba(0, 0, 0, 0.3)
+
+.vote-cell-header
+    height: 10px
+    width: 100%
+    background: red
+    display: flex
+    align-items: center
+    margin-bottom: 5px
+
+.vote-cell-results-container
+    margin: auto
+    display: flex
+    flex-direction: row
+    width: 100%
+
+.vote-cell-points
+    @extend .vote-cell-text
+    margin: auto 10px
+    min-width: 20px

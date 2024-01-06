@@ -1,25 +1,45 @@
-'use server'
+"use server";
 import Chat from "./Chat";
 import Player from "./Player";
+import { Server } from "socket.io";
 
 export default class Game {
   lobbyName = "";
   id = "";
-  round = 1;
-  currentLetter = "A";
+  round = 0;
+  currentLetter = "none";
   columns = [];
   chat = new Chat();
   letters = [];
-  timeLimit = 0;
+  timeLimit = 5 * 1000;
   allowedLetterList = null;
-  players = new Map();
+  players = {};
   maxPlayers = 2;
+  ownerID = "";
+
+  static GameState = {
+    paused: 0,
+    answering: 1,
+    voting: 2,
+  };
+
+  gameState = Game.GameState.paused;
+
+  /** @type {Server} */
+  io = null;
+
+  time = 0;
+  timerRunning = false;
+
+  maxRounds = 36; // TODO implement setting on game creation, absolute max should be the length of the letters
+
+  playersReady = [];
 
   /**
-   * 
+   *
    * @param {string} gameID
-   * @param {object} params 
-   * @param {string[]} params.columns 
+   * @param {object} params
+   * @param {string[]} params.columns
    * @param {string} params.lobbyName
    * @param {number} params.maxPlayers
    * @param {string} params.allowedLetterList // Optional
@@ -30,9 +50,7 @@ export default class Game {
     if (params.allowedLetterList) {
       this.allowedLetterList = params.allowedLetterList;
     }
-    this.getNewLetter();
     console.log(`A game with id ${gameID} has successfuly been created!`);
-    
   }
 
   getNewLetter() {
@@ -56,33 +74,170 @@ export default class Game {
       currentLetter: this.currentLetter,
       columns: this.columns,
       round: this.round,
-      timeLimit: this.timeLimit,
+      time: this.time,
+      owner: this.ownerID,
+      gameState: this.gameState,
     };
   }
 
-  getOrCreatePlayer(UUID, {name, color}) {
-    if(this.players.has(UUID)) {
-        return this.players.get(UUID)
+  setPoints(uuid, votes) {
+    const player = this.players[uuid];
+    if (player) {
+      player.setPoints(votes);
+      this.playersReady.push(uuid);
+    }
+
+    let allReady = true;
+    for (const id in this.players) {
+      if (Object.hasOwnProperty.call(this.players, id)) {
+        if (!this.playersReady.includes(id)) {
+          allReady = false;
+          break;
+        }
+      }
+    }
+
+    if (allReady) {
+      // End Vote
+      this.playersReady = [];
+      this.startTimer(30 * 1000, this.startRound.bind(this));
+      this.io.emit("vote-end", { gameData: this.getAsJSON(), playerData: this.PlayerData });
+    }
+  }
+
+  addRow(uuid, values) {
+    if (!this.players[uuid]) {
+      return;
+    }
+    if (this.gameState !== Game.GameState.answering) {
+      return;
+    }
+
+    const player = this.players[uuid];
+    player.addRow({ letter: this.currentLetter, columns: values, round: this.round });
+    this.playersReady.push(uuid);
+
+    let allReady = true;
+    for (const id in this.players) {
+      if (Object.hasOwnProperty.call(this.players, id)) {
+        if (!this.playersReady.includes(id)) {
+          allReady = false;
+          break;
+        }
+      }
+    }
+
+    if (allReady) {
+      this.playersReady = [];
+      this.time = 0;
+      this.startVote();
+      // dont need to send player data back because the startVote will handle that.
+      return;
     } else {
-        this.createPlayer({name, color})
+      this.startTimer(this.timeLimit, this.endRound.bind(this)); // After the first player finished start the countdown
+    }
+
+    return this.PlayerData;
+  }
+
+  startVote() {
+    if (this.gameState !== Game.GameState.voting) {
+      this.gameState = Game.GameState.voting;
+      const data = { gameData: this.getAsJSON(), playerData: this.PlayerData };
+      this.io.emit("start-vote", data);
     }
   }
 
-  createPlayer({name, color}) {
-    const player = new Player({name, color});
-    this.players.set(player.uuid, player);
+  /**
+   * 
+   * @param {number} time the amount of time in ms that the timer will tick for and after which it will call the callback function 
+   * @param {Function} callback 
+   * @returns 
+   */
+  startTimer(time, callback) {
+    if (this.timerRunning) {
+      return;
+    }
+    this.time = time;
+    return new Promise(
+      ((resolve) => {
+        this.timerRunning = true;
+        function tick() {
+          this.io.emit("time-tick", this.time);
+          if (this.time > 0) {
+            setTimeout(() => {
+              this.time = Math.max(0, this.time - 1000);
+              tick.call(this);
+            }, 1000);
+          } else {
+            resolve();
+          }
+        }
+        tick.call(this);
+      }).bind(this)
+    ).then(() => {
+      this.timerRunning = false;
+      callback();
+    });
+  }
+
+  endRound() {
+    this.io.emit("round-end", { gameData: this.getAsJSON(), playerData: this.PlayerData });
+  }
+
+  /**
+   * @param {Server} io
+   */
+  startRound(io) {
+    if (io) {
+      this.io = io.to(this.id);
+    }
+    this.getNewLetter();
+    this.round++;
+    this.gameState = Game.GameState.answering;
+    this.io.emit("start-round", { gameData: this.getAsJSON(), playerData: this.PlayerData });
+  }
+
+  createPlayer(name, uuid) {
+    // Players are created after the game so we set the first player as the lobby owner when its created
+    let owner = false;
+    if (Object.keys(this.players).length === 0) {
+      owner = true;
+    }
+
+    let player = null;
+    let ownerUUID = "";
+    if (uuid) {
+      if (!this.players[uuid]) {
+        player = new Player(name);
+        player.uuid = uuid;
+        ownerUUID = uuid;
+        this.players[uuid] = player;
+      }
+    } else {
+      player = new Player(name);
+      this.players[uuid] = player;
+      ownerUUID = player.uuid;
+    }
+
+    if (owner) {
+      this.ownerID = player.uuid;
+      console.log("Set", player.uuid, "as owner for", this.id);
+    }
     return player;
-  }
-
-  get PlayerUUIDs() {
-    const playerUUIDs = []
-    for (const key of this.players.keys()) {
-        playerUUIDs.push(key)
-    }
-    return playerUUIDs
   }
 
   get Chat() {
     return this.chat;
+  }
+
+  get PlayerData() {
+    const playerData = [];
+    for (const uuid in this.players) {
+      if (Object.hasOwnProperty.call(this.players, uuid)) {
+        playerData.push(this.players[uuid]);
+      }
+    }
+    return playerData;
   }
 }

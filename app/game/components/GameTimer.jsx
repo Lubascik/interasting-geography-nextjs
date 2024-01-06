@@ -1,23 +1,14 @@
 import { useEffect, useState } from "react"
 import styles from "@styles/GameTimer.module.sass"
 
-export default function GameTimer({ startTime, onTimeExpired, timerOn }) {
-    const [time, setTime] = useState(startTime || 0)
+export default function GameTimer({ time }) {
+    const [clientTime, setTime] = useState()
 
     useEffect(() => {
-        if (timerOn && time > 0) {
-            setTimeout(() => {
-                if (time > 0 && time - 1000 > 0) {
-                    setTime(time - 1000)
-                } else {
-                    setTime(0)
-                    onTimeExpired();
-                }
-            }, 1000);
-        }
-    }, [timerOn, time])
+        setTime(time)
+    }, [time])
 
-    const date = new Date(time)
+    const date = new Date(clientTime || time || 0)
 
     return (
         <div className={styles["timer-container"]}>

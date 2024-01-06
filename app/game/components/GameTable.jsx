@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@styles/GameTable.module.sass";
 import CellInput from "./CellInput.jsx";
 import Cell from "./Cell.jsx";
 
-const GameTable = ({ gameData, playerData }) => {
+const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, color, showInput, setShowInput }) => {
   const [columnValues, setColumnValues] = useState(new Map());
+  const [started, setStarted] = useState(gameData.gameState !== 0);
 
   const setColumnValue = (id, value) => {
     columnValues.set(id, value)
@@ -12,54 +13,113 @@ const GameTable = ({ gameData, playerData }) => {
   }
 
   const onSubmitAnswers = () => {
-    // check if all columns are submited.
+    let vals = []
+    columnValues.forEach((val, key) => {
+      vals.push({ id: key, data: { text: val, points: null } })
+    })
+
+    socket.emit("add-row", { gameID: gameData.id, uuid: playerData.uuid, values: vals, letter: gameData.letter }, (data) => {
+      // setGameData(data.gameData)
+      setShowInput(false);
+      if(data) {
+        setPlayerData(data)
+      }
+    });
+  }
+
+  const [submit, setSubmit] = useState(false);
+  useEffect(()=>{
+    if(showInput && submit) {
+      onSubmitAnswers();
+    }
+  }, [submit])
+
+  socket.on("round-end", () => {
+    setSubmit(true)
+  })
+
+  useEffect(() => {
+    if (gameData.gameState !== 0) {
+      setStarted(true)
+    }
+  }, [gameData])
+  
+  function handleNextField(id) {
+    let index;
+    for (let i = 0; i < gameData.columns.length; i++) {
+      if(gameData.columns[i].id === id) {
+        index = i;
+        break;
+      }
+    }
+
+    if(!gameData.columns[index+1]) {
+      document.getElementById("submit-input").focus()
+    } else {
+      document.getElementById(gameData.columns[index+1].id + "-input").focus()
+    }
   }
 
   return (
-    <div className={styles["columns"]}>
+    <>
       {
-        gameData.columns.map(column => {
-          return (
-            <div key={column.id} className={styles["column"]}>
-              <div className={styles["column-header"]}>
-                <h1 className={styles["column-title"]}>{column.name}</h1>
-              </div>
-              <div className={styles["column-content"]}>
-                {
-                  playerData.data.rows.map(row => {
-                    const cols = row.columns.filter(columnOfRow => columnOfRow.id === column.id)
-                    if(cols.length >= 1) {
-                      return cols.map((columnOfRow, index) => {
-                        return <Cell key={column.id + "-cell-" + index} data={columnOfRow.data} />
-                      })
-                    } else {
-                      return <Cell key={column.id + "-cell-0"} data={{text: "", points: 0}} />
-                    }
-                  })
-                }
-                <CellInput key={column.id + "-input"} id={column.id} setValue={setColumnValue}></CellInput>
-              </div>
-            </div>
-          )
-        })
-      }
-      <div key={"column-results"} className={styles["column"]}>
-        <div className={styles["column-header"]}>
-          <h1 className={styles["column-title"]}>Results</h1>
+        !started &&
+        <div id="waiting-for-start" className={styles["wait-for-start"]}>
+          <h1 style={{ margin: "auto" }}>Waiting for host to start the game...</h1>
         </div>
-        <div className={styles["column-content"]}>
-          {
-            playerData.data.rows.map((row, index) => {
-              return <Cell key={"row" + index} data={row.columns.filter(col => col.id === "results")[0].data} />
-              // return <p>{row.columns.filter(col => col.id === "results")[0].data.points}</p>
-            })
-          }
-          {
-            <button key={"submitButton"} onClick={() => { onSubmitAnswers() }} className={styles["column-button"]}>Submit</button>
-          }
+      }
+      <div className={styles["columns"]}>
+        {
+          gameData.columns.map((column, colIndex) => {
+            let nIndex = 0;
+            return (
+              <div key={column.id} className={styles["column"]}>
+                <div className={styles["column-header"]} style={{ background: color }}>
+                  <h1 className={styles["column-title"]}>{column.name}</h1>
+                </div>
+                <div className={styles["column-content"]}>
+                  {
+                    playerData?.rows.map((row, rowIndex) => {
+                      const cols = row.columns.filter(columnOfRow => columnOfRow.id === column.id)
+                      if (cols.length >= 1) {
+                        return cols.map((columnOfRow) => {
+                          return <Cell key={column.id + "-cell-" + rowIndex + "-" + colIndex} data={columnOfRow.data} />
+                        })
+                      } else {
+                        nIndex++;
+                        return <Cell key={column.id + "-cell-" + nIndex + "-0"} data={{ text: "", points: 0 }} />
+                      }
+                    })
+                  }
+                  {
+                    showInput &&
+                    <CellInput key={column.id + "-input"} id={column.id} setValue={setColumnValue} nextField={handleNextField}></CellInput>
+                  }
+                </div>
+              </div>
+            )
+          })
+        }
+        <div key={"column-results"} className={styles["column"]}>
+          <div className={styles["column-header"]} style={{ background: color }}>
+            <h1 className={styles["column-title"]}>Results</h1>
+          </div>
+          <div className={styles["column-content"]}>
+            {
+              playerData?.rows.map((row, index) => {
+                const resultCol = row.columns.filter(col => col.id === "results")[0]
+                return <Cell key={"row" + index} data={resultCol ? resultCol.data : { text: "", points: null }} />
+                // return <p>{row.columns.filter(col => col.id === "results")[0].data.points}</p>
+              })
+            }
+            {
+              showInput &&
+              <button id="submit-input" key={"submitButton"} onClick={() => { onSubmitAnswers() }} className={styles["column-button"]}>Submit</button>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
