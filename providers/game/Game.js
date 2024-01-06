@@ -11,7 +11,7 @@ export default class Game {
   columns = [];
   chat = new Chat();
   letters = [];
-  timeLimit = 5 * 1000;
+  timeLimit = 30 * 1000;
   allowedLetterList = null;
   players = {};
   maxPlayers = 2;
