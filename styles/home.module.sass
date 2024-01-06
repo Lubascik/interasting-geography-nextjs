@@ -1,46 +1,26 @@
+@import "./vars.module"
+    
 .container
-  margin: 0
-  width: 100vw
-  height: 100vh
-  background-image: url("../images/front-page.svg")
-  background-size: cover
-  display: flex
-  justify-content: center
-  /* align-items: center; */
-  position: absolute
-
-.menu
-  width: 600px
-  height: 500px
-  margin-top: 35vh
-  display: flex
-  justify-content: flex-start
-  color: white
-  flex-direction: column
-  align-items: center
-
-.title
-  text-align: center
-  line-height: 63px
-  font-size: 63px
-  font-weight: 600
-  font-family: "Josefin Slab"
-  margin-top: 20px
-  margin-bottom: 60px
+    background: $bg-color
+    height: 100vh
+    display: flex
+    justify-content: center
+    align-items: center
+    flex-direction: column
+    h1
+        @include main-font
+        @include text-lg
+        color: white
+        font-weight: 700
 
 .button
-  text-align: center
-  font-family: "Josefin Slab"
-  font-size: 50px
-  font-weight: 400
-  color: white
-  background: none
-  border: none
-  padding: 10px
-  line-height: 50px
-  text-decoration: none
-  &:hover
-    text-decoration: underline
-  &-container
-    display: flex
-    flex-flow: column
+    background: $prim-color
+    padding: 10px
+    text-decoration: none
+    margin: 20px
+    border: 3px solid black
+    border-radius: 50px
+    h2
+        @include main-font
+        @include text-md
+        color: white
