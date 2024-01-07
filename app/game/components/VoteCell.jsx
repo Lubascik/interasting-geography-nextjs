@@ -1,7 +1,8 @@
 import styles from "@styles/VoteCell.module.sass";
 
-export default function VoteCell({ data, colID, handleVote, color, noVote, selected }) {
+export default function VoteCell({ data, colID, handleVote, color, noVote, selected, showPoints }) {
     const style = noVote ? { height: "50px" } : null
+    const points = data && data.points ? data.points < selected ? selected : data.points : selected && selected > 0 ? selected : 0 
     return (
         <div className={styles["vote-cell"]} style={style}>
             {
@@ -11,12 +12,12 @@ export default function VoteCell({ data, colID, handleVote, color, noVote, selec
             <div className={styles["vote-cell-results-container"]}>
                 <p className={styles["vote-cell-text"]}>{data && data.text.length > 0 ? data.text : ""}</p>
                 {
-                    noVote &&
-                    <p className={styles["vote-cell-points"]}>{data && data.points ? data.points : 0}</p>
+                    showPoints &&
+                    <p className={styles["vote-cell-points"]}>{points}</p>
                 }
             </div>
             {
-                !noVote && data &&
+                !noVote && data && data.points !== 0 &&
                 <div className={styles["vote-cell-input"]}>
                     <button {...{ disabled: selected === 0 }} onClick={() => { handleVote(colID, 0) }}>0</button>
                     <button {...{ disabled: selected === 5 }} onClick={() => { handleVote(colID, 5) }}>5</button>

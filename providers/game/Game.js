@@ -4,6 +4,13 @@ import Player from "./Player";
 import { Server } from "socket.io";
 
 export default class Game {
+  static GameState = {
+    paused: 0,
+    answering: 1,
+    voting: 2,
+    finished: 3,
+  };
+
   lobbyName = "";
   id = "";
   round = 0;
@@ -11,17 +18,11 @@ export default class Game {
   columns = [];
   chat = new Chat();
   letters = [];
-  timeLimit = 30 * 1000;
+
   allowedLetterList = null;
   players = {};
   maxPlayers = 2;
   ownerID = "";
-
-  static GameState = {
-    paused: 0,
-    answering: 1,
-    voting: 2,
-  };
 
   gameState = Game.GameState.paused;
 
@@ -30,6 +31,8 @@ export default class Game {
 
   time = 0;
   timerRunning = false;
+  timeLimit = 30 * 1000;
+  timeEndVote = 30 * 1000;
 
   maxRounds = 36; // TODO implement setting on game creation, absolute max should be the length of the letters
 
@@ -56,16 +59,26 @@ export default class Game {
   getNewLetter() {
     //TODO filter out already used letters
     //TODO if no more letters available end the game.
-    let letters = "";
+    let letters = "ABCDEFGHIJKLMNOPRSTUV".split("");
+    // let letters = "AB".split("");
     if (this.allowedLetterList) {
       letters = this.allowedLetterList;
-    } else {
-      letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    }
+    letters = letters.filter((ch) => !this.letters.includes(ch));
+    if (letters.length < 1) {
+      this.currentLetter = "none";
+      this.endGame();
+      return "none";
     }
     const newLetter = letters[Math.floor(Math.random() * letters.length)];
     this.currentLetter = newLetter;
     this.letters.push(newLetter);
     return newLetter;
+  }
+
+  endGame() {
+    this.gameState = Game.GameState.finished;
+    this.io.emit("end-game", {gameData: this.getAsJSON(), playerData: this.PlayerData})
   }
 
   getAsJSON() {
@@ -90,7 +103,8 @@ export default class Game {
     let allReady = true;
     for (const id in this.players) {
       if (Object.hasOwnProperty.call(this.players, id)) {
-        if (!this.playersReady.includes(id)) {
+        const player = this.players[id];
+        if (!this.playersReady.includes(id) && player.online) {
           allReady = false;
           break;
         }
@@ -100,8 +114,10 @@ export default class Game {
     if (allReady) {
       // End Vote
       this.playersReady = [];
-      this.startTimer(30 * 1000, this.startRound.bind(this));
+      this.startTimer(this.timeEndVote, this.startRound.bind(this));
       this.io.emit("vote-end", { gameData: this.getAsJSON(), playerData: this.PlayerData });
+    } else {
+      this.io.emit("update-playerData", this.PlayerData);
     }
   }
 
@@ -114,13 +130,14 @@ export default class Game {
     }
 
     const player = this.players[uuid];
-    player.addRow({ letter: this.currentLetter, columns: values, round: this.round });
+    player.addRow({ letter: this.currentLetter, columns: values, round: this.round, gameColumns: this.columns });
     this.playersReady.push(uuid);
 
     let allReady = true;
     for (const id in this.players) {
       if (Object.hasOwnProperty.call(this.players, id)) {
-        if (!this.playersReady.includes(id)) {
+        const player = this.players[id];
+        if (!this.playersReady.includes(id) && player.online) {
           allReady = false;
           break;
         }
@@ -149,10 +166,10 @@ export default class Game {
   }
 
   /**
-   * 
-   * @param {number} time the amount of time in ms that the timer will tick for and after which it will call the callback function 
-   * @param {Function} callback 
-   * @returns 
+   *
+   * @param {number} time the amount of time in ms that the timer will tick for and after which it will call the callback function
+   * @param {Function} callback
+   * @returns
    */
   startTimer(time, callback) {
     if (this.timerRunning) {
@@ -188,17 +205,21 @@ export default class Game {
   /**
    * @param {Server} io
    */
-  startRound(io) {
-    if (io) {
-      this.io = io.to(this.id);
+  startRound() {
+    if(this.gameState === Game.GameState.finished) {
+      return;
     }
     this.getNewLetter();
     this.round++;
+    this.time = this.timeLimit; // Set the time to the time limit so players dont think the time has already run out
     this.gameState = Game.GameState.answering;
     this.io.emit("start-round", { gameData: this.getAsJSON(), playerData: this.PlayerData });
   }
 
-  createPlayer(name, uuid) {
+  createPlayer(name, uuid, io) {
+    if (io && this.io === null) {
+      this.io = io.to(this.id);
+    }
     // Players are created after the game so we set the first player as the lobby owner when its created
     let owner = false;
     if (Object.keys(this.players).length === 0) {
@@ -206,18 +227,15 @@ export default class Game {
     }
 
     let player = null;
-    let ownerUUID = "";
     if (uuid) {
       if (!this.players[uuid]) {
         player = new Player(name);
         player.uuid = uuid;
-        ownerUUID = uuid;
         this.players[uuid] = player;
       }
     } else {
       player = new Player(name);
-      this.players[uuid] = player;
-      ownerUUID = player.uuid;
+      this.players[player.uuid] = player;
     }
 
     if (owner) {
@@ -225,6 +243,23 @@ export default class Game {
       console.log("Set", player.uuid, "as owner for", this.id);
     }
     return player;
+  }
+
+  disconnect(uuid) {
+    const player = this.players[uuid];
+    if (player) {
+      player.Offline();
+      this.io.emit("update-playerData", this.PlayerData);
+    }
+  }
+
+  connect(uuid) {
+    const player = this.players[uuid];
+    if (player) {
+      player.Online();
+      player.Active();
+      this.io.emit("update-playerData", this.PlayerData);
+    }
   }
 
   get Chat() {

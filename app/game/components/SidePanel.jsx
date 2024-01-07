@@ -13,47 +13,40 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
     const playerUUID = cookies.get("player-uuid")
 
     const _exitGame = () => {
-        router.push('/home')
-    }
-
-    useEffect(() => {
-        _initChat();
-    }, [])
-
-    const _initChat = () => {
-        if (socket) {
-            socket.emit('chat-get', { gameID: gameData.id })
-        }
+        router.push('/game')
     }
 
     const startGame = () => {
-        socket.emit("start-game", { gameID: gameData.id })
+        socket.emit("start-game")
     }
 
-    socket.on("game-started", () => {
-        setTimerOnOff(true)
-    })
+    function handleOnStartRound(data) {
+        setTime(data.gameData.time)
+    }
 
-    socket.on("time-tick", (data) => {
+    function handleOnTimeTick(data) {
         setTime(data)
-    })
+    }
 
-    socket.on("round-end", () => {
-        setTimerOnOff(false)
-    })
+    useEffect(()=>{
+        socket.on("start-round", handleOnStartRound)
+        socket.on("time-tick", handleOnTimeTick)
+        return ()=>{
+            socket.off("start-round", handleOnStartRound)
+            socket.off("time-tick", handleOnTimeTick)
+        }
+    }, []) 
 
     const _getSidepanelPlayer = (player) => {
         return (
             <div key={player.uuid} onClick={() => { /*setCurrentUUID(player.uuid)*/ }} className={styles["player"]}>
                 <div className={styles["name-container"]}>
-                    <span className={`${styles["status"]} ${styles[player.active ? "active" : "inactive"]}`} />
+                    <span className={`${styles["status"]} ${styles[player.online ? player.active ? "active" : "inactive" : "offline"]}`} />
                     <h3 className={styles["name"]}>{player.name}</h3>
                 </div>
                 <h3 className={styles["points"]}>{player.points}</h3>
             </div>)
     }
-
-    const [timerOn, setTimerOnOff] = useState(false)
 
     return (
         <div className={styles["side-panel"]}>
@@ -71,16 +64,16 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
             </div>
             <div className={styles["chat-container"]}>
                 <div className='chat-message-container'>
-
+                    <h1>Chat</h1>
                 </div>
-                <input className='chat-input' type="text" />
+                {/* <input className='chat-input' type="text" /> */}
             </div>
             <div className={styles["side-button-container"]}>
                 {
                     gameData.gameState === 0 && gameData.owner === playerUUID &&
                     <button onClick={() => { startGame() }} className={styles["side-button"]} style={{ background: color }}>Start Game!</button>
                 }
-                <button onClick={() => { setTimerOnOff(!timerOn) }} className={styles["side-button"]} style={{ background: color }}>Invite</button>
+                <button className={styles["side-button"]} style={{ background: color }}>Invite</button>
                 <button onClick={() => { _exitGame() }} className={styles["side-button"]} style={{ background: color }}>Exit Game</button>
             </div>
         </div>

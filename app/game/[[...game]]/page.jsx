@@ -2,23 +2,20 @@
 import React from "react";
 import GameMain from "../components/GameMain";
 import LoadingScreen from "../components/LoadingScreen";
-// import useSWR from 'swr';
 import { useEffect, useState } from 'react'
-import io, { Socket } from "socket.io-client";
-import CreateGame from "../components/CreateGame";
 import { useCookies } from 'next-client-cookies';
-import { setPlayerCookie, getCookie } from "../components/actions"
+import { setPlayerCookie } from "../components/actions"
 import GameHome from "../components/GameHome";
+import io from "socket.io-client";
 
-/** @type {Socket} */
 let socket;
-
 /**
  * Loading Game data
  * @returns {React.Component}
  */
 const game = ({ params }) => {
     const [lang, setLang] = useState("en");
+    const [isConnected, setIsConnected] = useState(false)
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState(null);
     const [playerData, setPlayerData] = useState(null);
@@ -53,20 +50,25 @@ const game = ({ params }) => {
     const socketInitializer = async (cookie) => {
         socketInitializing = true;
         await fetch('/api'); // Ping to create a socket server
-        socket = io()
+        socket = io(undefined, {
+            query: {
+                gameID,
+                // playerUUID: cookie.uuid || null
+            }
+        })
 
         socket.on('connect', () => {
             console.log('connected')
-            socket.emit("get-game", { gameID }, data => {
+            socket.emit("get-game", data => {
                 setGameData(data)
                 setIsLoading(false);
             })
-            socket.emit("get-playerData", { gameID }, data => {
+            socket.emit("get-playerData", data => {
                 setPlayerData(data)
                 setIsLoading(false);
             })
             if (cookie) {
-                socket.emit("create-newPlayer", { gameID, playerName: cookie.name, uuid: cookie.uuid }, (data) => {
+                socket.emit("create-newPlayer", { playerName: cookie.name, uuid: cookie.uuid }, (data) => {
                     if (data.error === undefined) {
                         setCurrentUUID(data.uuid)
                         setPlayerCookie(data)
@@ -83,6 +85,10 @@ const game = ({ params }) => {
             setGameData(data)
         })
         socket.on("start-round", (data) => {
+            setGameData(data.gameData)
+            setPlayerData(data.playerData)
+        })
+        socket.on("end-game", (data) => {
             setGameData(data.gameData)
             setPlayerData(data.playerData)
         })

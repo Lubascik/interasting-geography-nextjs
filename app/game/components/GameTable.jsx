@@ -3,9 +3,17 @@ import styles from "@styles/GameTable.module.sass";
 import CellInput from "./CellInput.jsx";
 import Cell from "./Cell.jsx";
 
-const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, color, showInput, setShowInput }) => {
+const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, color, showInput, setShowInput, cookieUUID }) => {
   const [columnValues, setColumnValues] = useState(new Map());
   const [started, setStarted] = useState(gameData.gameState !== 0);
+  const [finished, setFinished] = useState(gameData.gameState === 3);
+
+  let currentData = null
+  if (!cookieUUID) {
+      currentData = playerData[0]
+  } else {
+      currentData = playerData.filter(player => player.uuid === cookieUUID)[0]
+  }
 
   const setColumnValue = (id, value) => {
     columnValues.set(id, value)
@@ -18,7 +26,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
       vals.push({ id: key, data: { text: val, points: null } })
     })
 
-    socket.emit("add-row", { gameID: gameData.id, uuid: playerData.uuid, values: vals, letter: gameData.letter }, (data) => {
+    socket.emit("add-row", { uuid: currentData.uuid, values: vals, letter: gameData.letter }, (data) => {
       // setGameData(data.gameData)
       setShowInput(false);
       if(data) {
@@ -34,13 +42,26 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
     }
   }, [submit])
 
-  socket.on("round-end", () => {
+  function handleRoundEnd() {
     setSubmit(true)
-  })
+  }
+
+  useEffect(()=>{
+    socket.on("round-end", handleRoundEnd)
+    return ()=>{
+      socket.off("round-end", handleRoundEnd)
+    }
+  },[])
+
+  
 
   useEffect(() => {
     if (gameData.gameState !== 0) {
       setStarted(true)
+    }
+    if (gameData.gameState === 3) {
+      // Game Finished
+      setFinished(true)
     }
   }, [gameData])
   
@@ -63,6 +84,13 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
   return (
     <>
       {
+        finished &&
+        <div id="game-over" className={styles["wait-for-start"]}>
+          <h1 style={{ margin: "auto" }}>Game Over!</h1>
+          <h1 style={{ margin: "auto" }}>Winner is {playerData.reduce((prev, current) => prev.points > current.points ? prev : current).name}</h1>
+        </div>
+      }
+      {
         !started &&
         <div id="waiting-for-start" className={styles["wait-for-start"]}>
           <h1 style={{ margin: "auto" }}>Waiting for host to start the game...</h1>
@@ -79,7 +107,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                 </div>
                 <div className={styles["column-content"]}>
                   {
-                    playerData?.rows.map((row, rowIndex) => {
+                    currentData?.rows.map((row, rowIndex) => {
                       const cols = row.columns.filter(columnOfRow => columnOfRow.id === column.id)
                       if (cols.length >= 1) {
                         return cols.map((columnOfRow) => {
@@ -106,7 +134,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
           </div>
           <div className={styles["column-content"]}>
             {
-              playerData?.rows.map((row, index) => {
+              currentData?.rows.map((row, index) => {
                 const resultCol = row.columns.filter(col => col.id === "results")[0]
                 return <Cell key={"row" + index} data={resultCol ? resultCol.data : { text: "", points: null }} />
                 // return <p>{row.columns.filter(col => col.id === "results")[0].data.points}</p>
@@ -114,7 +142,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
             }
             {
               showInput &&
-              <button id="submit-input" key={"submitButton"} onClick={() => { onSubmitAnswers() }} className={styles["column-button"]}>Submit</button>
+              <button id="submit-input" key={"submitButton"} onClick={() => { onSubmitAnswers() }} className={styles["column-button"]} style={{backgroundColor: color, color: "white"}}>Submit</button>
             }
           </div>
         </div>

@@ -7,7 +7,7 @@ const NewPlayer = ({ socket, gameData, setCurrentUUID }) => {
     function handleSubmit(e) {
         e.preventDefault()
         const formData = new FormData(e.target)
-        socket.emit("create-newPlayer", { gameID: gameData.id, playerName: formData.get("playerName") }, (data)=>{
+        socket.emit("create-newPlayer", { playerName: formData.get("playerName") }, (data)=>{
             if(data.error === undefined) {
                 setCurrentUUID(data.uuid)
                 setPlayerCookie(data)

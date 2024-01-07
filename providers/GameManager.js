@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 class GameManager {
   games = new Map();
   players = new Map(); // Map the players to games for tracking
+  socketMap = new Map();
 
   constructor() {
     console.log("Game Manager Created");
@@ -37,26 +38,44 @@ class GameManager {
   /**
    *
    * @param {string} gameID
-   * @returns {Game}
+   * @returns {Game | null}
    */
   getGame(gameID) {
-    return this.games.get(gameID);
+    if(this.games.has(gameID)) {
+      return this.games.get(gameID);
+    }
+    return null;
   }
 
-  createPlayer({ name, gameID, uuid }) {
+  createPlayer({ name, gameID, uuid, socketID, io }) {
     if (!gameID || !name || !this.games.has(gameID)) {
       return;
     }
 
-    
-    const game = this.games.get(gameID);
-    const player = game.createPlayer(name, uuid);
+    const game = this.getGame(gameID);
+    if(!game) {
+      console.log("Game not found while creating a player!");
+      return;
+    }
+    const player = game.createPlayer(name, uuid, io);
 
-    this.addPlayer({ uuid: player.uuid, name, gameID });
+    this.addPlayer({ uuid: player.uuid, name, gameID, socketID });
     return player;
   }
 
-  addPlayer({ uuid, name, gameID }) {
+  getPlayerUUID(socketID) {
+    if(this.socketMap.has(socketID)) {
+      const uuid = this.socketMap.get(socketID);
+      return uuid;
+    }
+    return;
+  }
+
+  removeSocket(socketID) {
+    this.socketMap.delete(socketID);
+  }
+
+  addPlayer({ uuid, name, gameID, socketID }) {
     if (this.players.has(uuid) && gameID) {
       const playerInfo = this.players.get(uuid);
       if (!playerInfo.games.includes(gameID)) {
@@ -66,6 +85,7 @@ class GameManager {
     } else {
       this.players.set(uuid, { name, games: gameID ? [gameID] : [] });
     }
+    this.socketMap.set(socketID, uuid)
   }
 }
 

@@ -7,17 +7,30 @@ import NewPlayer from './NewPlayer';
 import { useCookies } from 'next-client-cookies';
 
 const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, currentUUID, setCurrentUUID }) => {
+    const [showInput, setShowInput] = useState(gameData.gameState === 1)
     const cookies = useCookies();
     const cookieUUID = cookies.get("player-uuid")
 
-    let currentData = null
-    if (!currentUUID) {
-        currentData = playerData[0]
-    } else {
-        currentData = playerData.filter(player => player.uuid === currentUUID)[0]
+    function handleOnStartVote(data) {
+        setPlayerData(data.playerData);
+        setGameData(data.gameData);
     }
 
-    const [showInput, setShowInput] = useState(gameData.gameState === 1)
+    useEffect(()=>{
+        function onFocus() {
+            if (document.visibilityState === 'visible') {
+                socket.emit("active")
+            } else {
+                socket.emit("inactive")
+            }
+        }
+        document.addEventListener("visibilitychange", onFocus);
+        socket.on("start-vote", handleOnStartVote)
+        return ()=>{
+            document.removeEventListener("visibilitychange", onFocus)
+            socket.off("start-vote", handleOnStartVote)
+        }
+    },[])
 
     useEffect(() => {
         if (gameData.gameState === 1) {
@@ -49,11 +62,6 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
         return colors[index]
     })()
 
-    socket.on("start-vote", (data)=>{
-        setPlayerData(data.playerData);
-        setGameData(data.gameData);
-    })
-
     return (
         <div className={styles["main"]}>
             {
@@ -64,7 +72,7 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
                 <div className={styles["main-panel"]} style={{ border: "5px solid " + color }}>
                     {
                         gameData.gameState !== 2 &&
-                        <GameTable {...{ gameData, setGameData, playerData: currentData, setPlayerData, socket, color, showInput, setShowInput }}></GameTable>
+                        <GameTable {...{ gameData, setGameData, playerData: playerData, setPlayerData, socket, color, showInput, setShowInput, cookieUUID }}></GameTable>
                     }
                     {
                         gameData.gameState === 2 &&

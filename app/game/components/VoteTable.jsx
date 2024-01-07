@@ -5,16 +5,33 @@ import VoteCell from "./VoteCell.jsx";
 const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, color, showInput, setShowInput, cookieUUID }) => {
     const [columnVotes, setColumnVotes] = useState(new Map())
     const [allColsSubmited, setAllColsSubmited] = useState(false)
+    const [colsChecked, setColsChecked] = useState(false)
+
+    const currentRow = playerData.filter(player => player.uuid === cookieUUID)[0].rows.filter(row => row.round === gameData.round)[0]
+    const currentPlayerColumns = currentRow ? currentRow.columns : []
+
+    if (!colsChecked) {
+        const checkColsMap = new Map(columnVotes);
+        for (const column of currentPlayerColumns) {
+            if (column.data.points === 0 && !checkColsMap.has(column.id)) {
+                checkColsMap.set(column.id, 0)
+            }
+        }
+        handleVote(null, null, checkColsMap)
+        setColsChecked(true);
+    }
 
     // console.log(playerData);
-    function handleVote(colID, points) {
-        const votesMap = new Map(columnVotes);
-        votesMap.set(colID, points);
+    function handleVote(colID, points, map) {
+        let votesMap = new Map(columnVotes);
+        if (map) {
+            votesMap = map;
+        } else {
+            votesMap.set(colID, points);
+        }
         setColumnVotes(votesMap);
         let allColsSet = true;
-        for (const column of playerData.filter(player => player.uuid === cookieUUID)[0]
-            .rows.filter(row => row.round === gameData.round)[0]
-            .columns) {
+        for (const column of currentPlayerColumns) {
             if (!votesMap.has(column.id)) {
                 allColsSet = false;
                 break;
@@ -24,7 +41,7 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
         if (allColsSet) {
             setAllColsSubmited(true);
 
-            socket.emit("set-points", { gameID: gameData.id, uuid: cookieUUID, votes: Array.from(votesMap) })
+            socket.emit("set-points", { uuid: cookieUUID, votes: Array.from(votesMap) })
         }
     }
 
@@ -41,15 +58,6 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                                 <h1 className={styles["column-title"]}>{column.name}</h1>
                             </div>
                             <div className={styles["column-content"]}>
-                                <VoteCell key={column.id + "-cell-myAnswers-" + colIndex} {...{
-                                    data: playerData.filter(player => player.uuid === cookieUUID)[0]
-                                        .rows.filter(row => row.round === gameData.round)[0]
-                                        .columns.filter(col => col.id === column.id)[0]?.data,
-                                    handleVote,
-                                    colID: column.id,
-                                    selected: columnVotes.has(column.id) ? columnVotes.get(column.id) : null,
-                                    noVote: allColsSubmited
-                                }}></VoteCell>
                                 {
                                     playerData.map((player, playerIndex) => {
                                         return player.rows?.filter(row => row.round === gameData.round)
@@ -60,15 +68,27 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                                                 const cols = row.columns.filter(columnOfRow => columnOfRow.id === column.id)
                                                 if (cols.length >= 1) {
                                                     return cols.map((columnOfRow) => {
-                                                        return <VoteCell noVote key={column.id + "-cell-" + rowIndex + "-" + colIndex} {...{ data: columnOfRow.data, color: colors[playerIndex] }} />
+                                                        return <VoteCell showPoints={allColsSubmited} noVote key={column.id + "-cell-" + rowIndex + "-" + colIndex} {...{ data: columnOfRow.data, color: colors[playerIndex] }} />
                                                     })
                                                 } else {
                                                     nIndex++;
-                                                    return <VoteCell noVote key={column.id + "-cell-" + nIndex + "-0"} {...{ color: colors[playerIndex] }} />
+                                                    return <VoteCell showPoints={allColsSubmited} noVote key={column.id + "-cell-" + nIndex + "-0"} {...{ color: colors[playerIndex] }} />
                                                 }
                                             })
                                     })
 
+                                }
+                                {
+                                    currentPlayerColumns.length > 0 &&
+                                    <VoteCell key={column.id + "-cell-myAnswers-" + colIndex} {...{
+                                        data: currentPlayerColumns.filter(col => col.id === column.id)[0]?.data,
+                                        handleVote,
+                                        colID: column.id,
+                                        selected: columnVotes.has(column.id) ? columnVotes.get(column.id) : null,
+                                        noVote: allColsSubmited || currentPlayerColumns.filter(col => col.id === "results").length > 0,
+                                        showPoints: allColsSubmited,
+                                        color
+                                    }}></VoteCell>
                                 }
                             </div>
                         </div>
@@ -76,15 +96,12 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                 })
             }
             {
-                playerData[0].rows.filter(row => row.round === gameData.round)[0].columns.filter(col => col.id === "results").length > 0 &&
+                currentPlayerColumns.length > 0 && currentPlayerColumns.filter(col => col.id === "results").length > 0 &&
                 <div key={"column-results"} className={styles["column"]}>
                     <div className={styles["column-header"]} style={{ background: color }}>
                         <h1 className={styles["column-title"]}>Results</h1>
                     </div>
                     <div className={styles["column-content"]}>
-                        <VoteCell noVote key={"results-column-myResults"} data={playerData.filter(player => player.uuid === cookieUUID)[0]
-                                        .rows.filter(row => row.round === gameData.round)[0]
-                                        .columns.filter(col => col.id === "results")[0]?.data} />
                         {
                             playerData.map((player, playerIndex) => {
                                 if (player.uuid === cookieUUID) {
@@ -96,6 +113,7 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                                 })
                             })
                         }
+                        <VoteCell noVote key={"results-column-myResults"} color={color} data={currentPlayerColumns.filter(col => col.id === "results")[0]?.data} />
                     </div>
                 </div>
             }

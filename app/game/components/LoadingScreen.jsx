@@ -6,7 +6,7 @@ import styles from "@styles/LoadingScreen.module.sass"
 // import { solid, regular, light, thin, duotone, icon } from '@fortawesome/fontawesome-svg-core/import.macro' // <-- import styles to be used
 
 const LoadingScreen = () => {
-  const loadingMessages = ["Calling mothership..", "Measuring Dick Size", "Test"]
+  const loadingMessages = ["Calling mothership..", "Buying Doughnuts!", "Radioing for help!"]
   const [messageIndex, setMessageIndex] = useState(0)
   const [progress, setProgress] = useState(0)
 
@@ -27,7 +27,7 @@ const LoadingScreen = () => {
       <div className={styles["loadingScreen-centerContainer"]}>
         <div className={styles["loadingScreen-loadingMessageContainer"]}>
           {/* <div className={styles["loadingScreen-loadingIcon"]}></div> */}
-          <h1>The Game is loading some important data. Please wait while it struggles to do so.</h1>
+          <h1>The Game is loading some important data. Please wait...</h1>
           <br />
           <br />
           <h2>{loadingMessages[messageIndex]}</h2>

@@ -16,76 +16,95 @@ export default function SocketHandler(req, res) {
       res.socket.server.io = io;
 
       io.on("connection", (socket) => {
-        const clientId = socket.id;
-        console.log("A client connected");
-        console.log(`A client connected. ID: ${clientId}`);
+        console.log("Client Connected:", socket.id);
+        const gameID = socket.handshake.query.gameID;
+        socket.join(gameID);
+        const game = g_GameManager.getGame(gameID);
+        if (!game) {
+          return;
+        }
 
-        socket.on("get-game", ({ gameID }, callback) => {
-          if (g_GameManager.games.has(gameID)) {
-            socket.join(gameID); // Getting the game / Joining so we can add the socket to the game
-            console.log("Getting game data for:", gameID);
-            callback(g_GameManager.games.get(gameID).getAsJSON());
+        socket.on("disconnecting", () => {
+          const uuid = g_GameManager.getPlayerUUID(socket.id)
+          if(uuid) {
+            game.disconnect(uuid);
           }
-        });
-        socket.on("get-playerData", ({ gameID }, callback) => {
-          if (g_GameManager.games.has(gameID)) {
-            console.log("Getting Player data for:", gameID);
-            callback(g_GameManager.games.get(gameID).PlayerData);
-          }
-        });
-        socket.on("start-game", ({ gameID }, callback) => {
-          if (g_GameManager.games.has(gameID)) {
-            const game = g_GameManager.games.get(gameID);
-            game.startRound(io);
-            io.to(gameID).emit("game-started", game.getAsJSON());
-          }
+          g_GameManager.removeSocket(socket.id);
         });
 
-        socket.on("add-row", ({ gameID, uuid, values }, callback) => {
-          if (g_GameManager.games.has(gameID)) {
-            const game = g_GameManager.games.get(gameID);
-            if (!game.players[uuid]) {
-              return;
-            }
-
-            const playerData = game.addRow(uuid, values);
-            callback(playerData);
-          }
+        socket.on("get-game", (callback) => {
+          callback(game.getAsJSON());
+        });
+        socket.on("get-playerData", (callback) => {
+          callback(game.PlayerData);
+        });
+        socket.on("start-game", () => {
+          game.startRound(io);
         });
 
-        socket.on("set-points", ({ gameID, uuid, votes }) => {
-          if (g_GameManager.games.has(gameID)) {
-            const game = g_GameManager.games.get(gameID);
-            const player = game.players[uuid];
-            if (player) {
-              game.setPoints(uuid, votes);
-            }
+        socket.on("add-row", ({ uuid, values }, callback) => {
+          if (!game.players[uuid]) {
+            return;
+          }
+
+          const playerData = game.addRow(uuid, values);
+          callback(playerData);
+        });
+
+        socket.on("set-points", ({ uuid, votes }) => {
+          const player = game.players[uuid];
+          if (player) {
+            game.setPoints(uuid, votes);
           }
         });
 
-        socket.on("create-newPlayer", ({ gameID, playerName, uuid }, callback) => {
-          if (g_GameManager.games.has(gameID)) {
-            const game = g_GameManager.games.get(gameID);
-            if (uuid && game.players[uuid]) {
-              callback({ uuid: uuid, name: playerName });
-              return;
+        socket.on("active", ()=>{
+          const uuid = g_GameManager.getPlayerUUID(socket.id)
+          if(uuid) {
+            const player = game.players[uuid]
+            if(player) {
+              player.Active()
+              io.to(gameID).emit("update-playerData", game.PlayerData)
             }
-            const player = g_GameManager.createPlayer({ name: playerName, gameID, uuid: uuid });
-            if (!player) {
-              console.log("Failed creating a player for game:", gameID);
-              callback({ error: "Failed creating the player for game: " + gameID });
-              return;
-            }
-            console.log("Created a new player for:", gameID);
-            g_GameManager.addPlayer({ uuid: player.uuid, name: player.name, gameID });
-            io.to(gameID).emit("update-playerData", game.PlayerData);
-
-            // If after creating the player we have only 1 that means that we set the owner of the game to that player id and we need to update the game data
-            if (Object.keys(game.players).length === 1) {
-              io.to(gameID).emit("update-gameData", game.getAsJSON());
-            }
-            callback({ uuid: player.uuid, name: playerName });
           }
+        })
+        
+        socket.on("inactive", ()=>{
+          const uuid = g_GameManager.getPlayerUUID(socket.id)
+          if(uuid) {
+            const player = game.players[uuid]
+            if(player) {
+              player.Inactive()
+              io.to(gameID).emit("update-playerData", game.PlayerData)
+            }
+          }
+        })
+
+        socket.on("create-newPlayer", ({ playerName, uuid }, callback) => {
+          console.log("Creating Player!", playerName, uuid);
+          if (uuid && game.players[uuid]) {
+            game.connect(uuid);
+            g_GameManager.addPlayer({uuid, gameID, name: playerName, socketID: socket.id})
+            callback({ uuid: uuid, name: playerName });
+            return;
+          }
+
+          // Try creating a player
+          const player = g_GameManager.createPlayer({ name: playerName, gameID: game.id, uuid: uuid, socketID: socket.id, io: io });
+          if (!player) {
+            console.log("Failed creating a player for game:", game.id);
+            callback({ error: "Failed creating the player for game: " + game.id });
+            return;
+          }
+          console.log("Created a new player for:", game.id);
+          // g_GameManager.addPlayer({ uuid: player.uuid, name: player.name, gameID: game.id, socketID: socket.id });
+          io.to(game.id).emit("update-playerData", game.PlayerData);
+
+          // If after creating the player we have only 1 that means that we set the owner of the game to that player id and we need to update the game data
+          if (Object.keys(game.players).length === 1) {
+            io.to(game.id).emit("update-gameData", game.getAsJSON());
+          }
+          callback({ uuid: player.uuid, name: playerName });
         });
       });
     }

@@ -7,7 +7,6 @@ const GameHome = () => {
     const [newGame, setNewGame] = useState(false)
     const [join, setJoin] = useState(false)
     function handleNewGame() {
-        console.log("HI");
         setNewGame(true)
         setJoin(false)
     }
