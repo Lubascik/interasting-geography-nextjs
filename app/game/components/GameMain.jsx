@@ -16,7 +16,13 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
         setGameData(data.gameData);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
+        const body = document.querySelector("body")
+        const html = document.querySelector("html")
+        body.style.height = "100%"
+        body.style.overflowY = "hidden"
+        html.style.height = "100%"
+        html.style.overflowY = "hidden"
         function onFocus() {
             if (document.visibilityState === 'visible') {
                 socket.emit("active")
@@ -26,11 +32,11 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
         }
         document.addEventListener("visibilitychange", onFocus);
         socket.on("start-vote", handleOnStartVote)
-        return ()=>{
+        return () => {
             document.removeEventListener("visibilitychange", onFocus)
             socket.off("start-vote", handleOnStartVote)
         }
-    },[])
+    }, [])
 
     useEffect(() => {
         if (gameData.gameState === 1) {

@@ -12,4 +12,4 @@ class APIAuth {
   }
 }
 
-export default APIAuth
+export default APIAuth;

@@ -41,7 +41,7 @@ class GameManager {
    * @returns {Game | null}
    */
   getGame(gameID) {
-    if(this.games.has(gameID)) {
+    if (this.games.has(gameID)) {
       return this.games.get(gameID);
     }
     return null;
@@ -53,7 +53,7 @@ class GameManager {
     }
 
     const game = this.getGame(gameID);
-    if(!game) {
+    if (!game) {
       console.log("Game not found while creating a player!");
       return;
     }
@@ -64,7 +64,7 @@ class GameManager {
   }
 
   getPlayerUUID(socketID) {
-    if(this.socketMap.has(socketID)) {
+    if (this.socketMap.has(socketID)) {
       const uuid = this.socketMap.get(socketID);
       return uuid;
     }
@@ -85,7 +85,7 @@ class GameManager {
     } else {
       this.players.set(uuid, { name, games: gameID ? [gameID] : [] });
     }
-    this.socketMap.set(socketID, uuid)
+    this.socketMap.set(socketID, uuid);
   }
 }
 

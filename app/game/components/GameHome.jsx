@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import styles from "@styles/GameHome.module.sass";
-import CreateGame from "./CreateGame";
 import NewGame from "./NewGame";
+import Image from 'next/image'
+import logoSRB from "/images/logo-srb.svg"
+import logoEN from "/images/logo-en.svg"
 
-const GameHome = () => {
+const GameHome = ({ lang }) => {
     const [newGame, setNewGame] = useState(false)
     const [join, setJoin] = useState(false)
     function handleNewGame() {
@@ -21,15 +23,25 @@ const GameHome = () => {
             {
                 newGame &&
                 <div className={styles["modal"]}>
-                    <NewGame></NewGame>
+                    <NewGame onClose={() => { setNewGame(false) }}></NewGame>
                 </div>
             }
             <div className={styles["container"]}>
                 <div className={styles["menu"]}>
-                    <h1 className={styles["title"]}>Interesting Geography</h1>
+                    {/* <h1 className={styles["title"]}>Interesting Geography</h1> */}
+                    <div className={styles["logo"]}>
+                        {
+                            lang === "srb" &&
+                            <Image src={logoSRB} alt="Interesting Geography"></Image>
+                        }
+                        {
+                            (!lang || lang === "en") &&
+                            <Image src={logoEN} alt="Interesting Geography"></Image>
+                        }
+                    </div>
                     <div className={styles["button-container"]}>
                         <button onClick={handleNewGame} className={styles["button"]}>New Game</button>
-                        <button onClick={handleJoin} className={styles["button"]}>Join</button>
+                        {/* <button onClick={handleJoin} className={styles["button"]}>Join</button> */}
                     </div>
                 </div>
             </div>

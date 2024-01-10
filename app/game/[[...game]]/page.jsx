@@ -103,7 +103,7 @@ const game = ({ params }) => {
     } else if (gameData && playerData) {
         return <GameMain {...{ gameData, setGameData, playerData, setPlayerData, socket, currentUUID, setCurrentUUID }}></GameMain>
     } else if (!gameData) {
-        return <GameHome></GameHome>
+        return <GameHome {...{ lang }}></GameHome>
     }
 };
 

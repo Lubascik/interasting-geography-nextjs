@@ -81,6 +81,10 @@ export default function SocketHandler(req, res) {
         })
 
         socket.on("create-newPlayer", ({ playerName, uuid }, callback) => {
+          // if(game.players.keys().length >= game.maxPlayers) {
+          //   callback({error: {id: "full", msg: "Max amount of players reached!"}})
+          //   return;
+          // }
           console.log("Creating Player!", playerName, uuid);
           if (uuid && game.players[uuid]) {
             game.connect(uuid);
@@ -122,7 +126,7 @@ export default function SocketHandler(req, res) {
   }
 
   if (req.method === "POST") {
-    const required = ["lobbyName", "maxPlayers", "columns"];
+    const required = ["lobbyName", "maxPlayers", "timeLimit", "columns"];
 
     if (!req.headers["content-type"] || req.headers["content-type"] !== "application/json") {
       res.status(400);

@@ -1,23 +1,25 @@
 @import ./vars.module
 .vote-cell
+    margin-bottom: 5px
     background-color: #C8D6E5
     height: 80px
+    width: calc( 100% + 4px )
     display: flex
     flex-direction: column
     flex-wrap: nowrap
     overflow: hidden
     // justify-content: center
-    box-sizing: border-box
-    border-left: 0px
-    border-right: 0px
-    border-top: 0px
-    border-bottom: 2px
-    border-style: dashed
-    border-color: #576574
-    border-image: url("../images/border-image.png") 1 round
+    // box-sizing: border-box
+    // border-left: 0px
+    // border-right: 0px
+    // border-top: 0px
+    // border-bottom: 2px
+    // border-style: dashed
+    // border-color: #576574
+    // border-image: url("../images/border-image.png") 1 round
 
 .vote-cell-text
-    @include text-sm
+    @include text-md
     text-overflow: ellipsis
     word-break: break-word
     display: -webkit-box
@@ -34,30 +36,38 @@
 .vote-cell-input
     @extend .vote-cell-text
     width: 100%
+    display: flex
+    flex-direction: row
     // background: red
+    margin: 0
     button
-        @include text-sm
+        @include text-md
         @include main-font
-        font-weight: 700
-        width: 40px
-        height: 40px
-        border-radius: 50%
-        border: 3px solid
-        margin: 2px 4px
-        outline-width: 1px
-        outline-color: black
-        outline-style: solid
+        font-weight: 900
+        width: -webkit-fill-available
+        height: 25px
+        color: white
+        border: none
+        text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
+        // border-radius: 50%
+        // border: 3px solid
+        // margin: 2px 4px
+        // outline-width: 1px
+        // outline-color: black
+        // outline-style: solid
         text-align: center
         &:nth-child(1)
-            border-color: red
+            background: #E9204F
         &:nth-child(2)
-            border-color: orange
+            background: #E8785F
         &:nth-child(3)
-            border-color: yellow
+            background: #E9D65D
         &:nth-child(4)
-            border-color: lime
+            background: #16B64E
         &:active
             box-shadow: -4px 4px 5px rgba(0, 0, 0, 0.3)
+        &:disabled
+            filter: grayscale(100%)
 
 .vote-cell-header
     height: 10px
@@ -65,13 +75,14 @@
     background: red
     display: flex
     align-items: center
-    margin-bottom: 5px
+    // margin-bottom: 5px
 
 .vote-cell-results-container
     margin: auto
     display: flex
     flex-direction: row
-    width: 100%
+    // width: 100%
+    padding: 5px
 
 .vote-cell-points
     @extend .vote-cell-text

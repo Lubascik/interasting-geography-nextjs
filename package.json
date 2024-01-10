@@ -12,19 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@fortawesome/fontawesome-svg-core": "^6.5.1",
-    "@fortawesome/free-brands-svg-icons": "^6.5.1",
-    "@fortawesome/free-regular-svg-icons": "^6.5.1",
-    "@fortawesome/free-solid-svg-icons": "^6.5.1",
-    "@fortawesome/react-fontawesome": "^0.2.0",
-    "babel-plugin-macros": "^3.1.0",
-    "concurrently": "^8.2.2",
-    "express": "^4.18.2",
-    "express-session": "^1.17.3",
     "include-media": "^2.0.0",
-    "mongodb": "^6.3.0",
     "next": "^14.0.4",
     "next-client-cookies": "^1.1.0",
     "next-connect": "^1.0.0",
@@ -32,13 +20,9 @@
     "react-dom": "^18.2.0",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
-    "swr": "^2.2.4",
-    "uuid": "^9.0.1",
-    "uuidv5": "^1.0.0"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2",
-    "prettier": "^2.8.3",
     "sass": "^1.69.5"
   }
 }

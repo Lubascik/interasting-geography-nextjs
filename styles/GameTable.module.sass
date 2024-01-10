@@ -6,25 +6,34 @@
     display: flex
     // flex-direction: row
     flex-flow: row nowrap
-    overflow: hidden
+    // overflow: hidden
     height: 100%
-    :nth-child(n)
+    min-width: 100%
 
 .column
+    min-width: 200px
     // overflow: hidden
-    display: flex
-    flex-flow: column nowrap
+    display: table-column
+    // flex-flow: column nowrap
     height: inherit
-    // background-color: #fff
-    width: stretch
-    box-sizing: border-box
-    border-left: 2px
-    border-right: 2px
-    border-bottom: 0px
-    border-top: 0px
-    border-style: dashed
-    border-color: #576574
-    border-image: url("../images/border-image.png") 1 round
+    width: -webkit-fill-available
+    // box-sizing: border-box
+    border-right: 0px
+    border-left: 3px
+    // border: 0 1px 0 1px solid $prim-color
+    // border-collapse: collapse
+    border-bottom: 0
+    border-top: 0
+    border-style: outset
+    // border-spacing: 15px
+    // border-color: #576574
+    border-image: url("../images/border-image.png") 2 round
+
+.column
+    &:last-child
+        .column-content
+            div
+                width: 100%
 
 .column:first-child
     border-left: none
@@ -39,11 +48,6 @@
         margin-right: 0px
     .column-content
         margin-right: 0px
-
-$elements: 15
-@for $i from 0 to $elements
-    .column:nth-child(#{$i})
-        background-color: hsl( $i * 30, 80, 40)
 
 .column-header
     height: 40px
@@ -72,9 +76,11 @@ $elements: 15
     color: black
     font-weight: 700
     font-family: Josefin Slab
-    box-sizing: border-box
-    &:active
-        border-bottom: 3px solid black
+    // box-sizing: border-box
+    outline: none
+    &:focus-within
+        height: calc( 40px + 3px)
+        border-bottom: 3px solid white
 
 .wait-for-start
     margin-top: 40px

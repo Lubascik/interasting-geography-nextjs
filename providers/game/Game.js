@@ -45,10 +45,13 @@ export default class Game {
    * @param {string[]} params.columns
    * @param {string} params.lobbyName
    * @param {number} params.maxPlayers
+   * @param {number} params.timeLimit
    * @param {string} params.allowedLetterList // Optional
    */
   constructor(gameID, params) {
     this.id = gameID;
+    this.timeLimit = params.timeLimit
+    this.maxPlayers = params.maxPlayers
     this.columns = params.columns;
     if (params.allowedLetterList) {
       this.allowedLetterList = params.allowedLetterList;
@@ -78,7 +81,7 @@ export default class Game {
 
   endGame() {
     this.gameState = Game.GameState.finished;
-    this.io.emit("end-game", {gameData: this.getAsJSON(), playerData: this.PlayerData})
+    this.io.emit("end-game", { gameData: this.getAsJSON(), playerData: this.PlayerData });
   }
 
   getAsJSON() {
@@ -206,7 +209,7 @@ export default class Game {
    * @param {Server} io
    */
   startRound() {
-    if(this.gameState === Game.GameState.finished) {
+    if (this.gameState === Game.GameState.finished) {
       return;
     }
     this.getNewLetter();

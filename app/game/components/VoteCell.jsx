@@ -1,13 +1,13 @@
 import styles from "@styles/VoteCell.module.sass";
 
-export default function VoteCell({ data, colID, handleVote, color, noVote, selected, showPoints }) {
-    const style = noVote ? { height: "50px" } : null
-    const points = data && data.points ? data.points < selected ? selected : data.points : selected && selected > 0 ? selected : 0 
+export default function VoteCell({ data, colID, handleVote, headerColor, backgroundColor, noVote, selected, showPoints }) {
+    const style = noVote ? { height: "50px", backgroundColor } : { backgroundColor }
+    const points = data && data.points ? data.points < selected ? selected : data.points : selected && selected > 0 ? selected : ""
     return (
         <div className={styles["vote-cell"]} style={style}>
             {
-                color &&
-                <div className={styles["vote-cell-header"]} style={{ backgroundColor: color }}></div>
+                headerColor &&
+                <div className={styles["vote-cell-header"]} style={{ backgroundColor: headerColor }}></div>
             }
             <div className={styles["vote-cell-results-container"]}>
                 <p className={styles["vote-cell-text"]}>{data && data.text.length > 0 ? data.text : ""}</p>

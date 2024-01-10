@@ -10,16 +10,17 @@ $side-panel-spacing: 10px
 
 .side-panel
     min-width: 100px
-    width: 277px
+    width: 230px
     flex-flow: column
     gap: $side-panel-spacing
     display: flex
+    position: relative
 
     .player-container
         height: fit-content
         width: 100%
         // margin-bottom: 40px
-            
+
         .player
             @extend .box-shadow
             height: 30px
@@ -42,7 +43,7 @@ $side-panel-spacing: 10px
                 background-color: #F368E0,
             // &:nth-child(7)
             // &:nth-child(8)
-                
+
             .name-container
                 height: inherit
                 display: flex
@@ -91,6 +92,9 @@ $side-panel-spacing: 10px
         @extend .box-shadow
         flex: 1 1 auto
         background-color: #576574
+        max-height: fit-content
+        height: -webkit-fill-available
+        // min-height: 400px
         // margin-bottom: 40px
         display: flex
         justify-content: center
@@ -108,6 +112,8 @@ $side-panel-spacing: 10px
         background-color: none
         justify-content: flex-end
         height: fit-content
+        position: relative
+        bottom: 0
 
         .side-button
             @include text-md
@@ -122,8 +128,11 @@ $side-panel-spacing: 10px
             border: none
             margin-top: 10px
             width: 100%
-            height: 60px
+            height: 40px
             justify-self: flex-end
             @extend .text-shadow
             &:hover
                 box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5)
+
+.side-empty
+    height: 0

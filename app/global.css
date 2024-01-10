@@ -1,8 +1,23 @@
 * {
-    margin: 0;
+  margin: 0;
 }
 
 @font-face {
-    font-family: "Josefin Slab";
-    src: url("../fonts/Josefin_Slab/static/JosefinSlab-Regular.ttf");
+  font-family: "Josefin Slab";
+  src: url("../fonts/Josefin_Slab/static/JosefinSlab-Regular.ttf");
 }
+
+/* html, body {height: 100%; overflow-y: hidden} */
+
+/* @media screen and (min-width: 320px) and (max-width: 767px) and (orientation: portrait) {
+  html {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+} */

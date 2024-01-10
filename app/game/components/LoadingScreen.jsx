@@ -1,26 +1,26 @@
-
-
-import React, { useEffect, useState } from 'react'
-import styles from "@styles/LoadingScreen.module.sass"
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { solid, regular, light, thin, duotone, icon } from '@fortawesome/fontawesome-svg-core/import.macro' // <-- import styles to be used
+import React, { useEffect, useState } from "react";
+import styles from "@styles/LoadingScreen.module.sass";
 
 const LoadingScreen = () => {
-  const loadingMessages = ["Calling mothership..", "Buying Doughnuts!", "Radioing for help!"]
-  const [messageIndex, setMessageIndex] = useState(0)
-  const [progress, setProgress] = useState(0)
+  const loadingMessages = [
+    "Calling mothership..",
+    "Buying Doughnuts!",
+    "Radioing for help!",
+  ];
+  const [messageIndex, setMessageIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     setTimeout(() => {
       if (messageIndex < loadingMessages.length - 1) {
-        setProgress(((messageIndex + 1) / (loadingMessages.length - 1)) * 100)
-        setMessageIndex(messageIndex + 1)
+        setProgress(((messageIndex + 1) / (loadingMessages.length - 1)) * 100);
+        setMessageIndex(messageIndex + 1);
       } else {
-        setProgress(0)
-        setMessageIndex(0)
+        setProgress(0);
+        setMessageIndex(0);
       }
     }, 1000);
-  }, [messageIndex])
+  }, [messageIndex]);
 
   return (
     <div className={styles["loadingScreen-container"]}>
@@ -33,14 +33,16 @@ const LoadingScreen = () => {
           <h2>{loadingMessages[messageIndex]}</h2>
         </div>
         <div className={styles["loadingScreen-loadingBar"]}>
-          {/* <FontAwesomeIcon className={styles["loadingScreen-loadingIcon"]} icon={solid("spinner")} spinPulse size="sm" /> */}
-          <div className={styles["loadingScreen-progressBar"]} style={{ width: progress + "%" }}>
+          <div
+            className={styles["loadingScreen-progressBar"]}
+            style={{ width: progress + "%" }}
+          >
             <p style={{ color: "black", textAlign: "center" }}>{progress}%</p>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LoadingScreen
+export default LoadingScreen;

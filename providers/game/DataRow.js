@@ -16,7 +16,7 @@ export default class DataRow {
    * Calculate result and add it to the row
    */
   finalize() {
-    const points = this.columns.map(col => col.data.points).reduce((prev, curr) => prev + curr);
+    const points = this.columns.map((col) => col.data.points).reduce((prev, curr) => prev + curr);
     this.addColumn({
       id: "results",
       round: this.round,

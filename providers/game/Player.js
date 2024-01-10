@@ -18,19 +18,19 @@ export default class Player {
   }
 
   Online(online = true) {
-    this.online = online
+    this.online = online;
   }
 
   Offline(online = false) {
-    this.online = online
+    this.online = online;
   }
 
   Active(active = true) {
-    this.active = active
+    this.active = active;
   }
 
   Inactive(active = false) {
-    this.active = active
+    this.active = active;
   }
 
   addRow({ letter, columns, round, gameColumns }) {
@@ -55,11 +55,11 @@ export default class Player {
 
   setPoints(votes) {
     const row = this.rows.filter((row) => row.round === this.lastSubmitedRound)[0];
-    if(row) {
+    if (row) {
       votes.forEach((column) => {
         const id = column[0];
         const points = column[1];
-  
+
         const dataColumn = row.columns.filter((dataColumn) => dataColumn.id === id)[0];
         dataColumn.data.points = points;
       });

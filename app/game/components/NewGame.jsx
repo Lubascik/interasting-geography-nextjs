@@ -2,12 +2,18 @@ import React, { useState } from 'react'
 import styles from "@styles/NewGame.module.sass"
 import { createGameRedirect } from './actions'
 
-const NewGame = () => {
+const NewGame = ({onClose}) => {
   const playerNum = {
     min: 2,
     max: 8
   }
+
+  const timeLimitNum = {
+    min: 10*1000,
+    max: 60*1000
+  }
   const [maxPlayers, setMaxPlayers] = useState(playerNum.max)
+  const [timeLimit, setTimeLimit] = useState(timeLimitNum.max)
   const [columns, setColumns] = useState([])
 
   async function handleSubmit(e) {
@@ -18,8 +24,9 @@ const NewGame = () => {
     const formData = new FormData(e.target)
 
     const data = {
-      maxPlayers: formData.get("max-players"),
-      lobbyName: formData.get("lobby-name"),
+      maxPlayers: formData.get("maxPlayers"),
+      timeLimit: formData.get("timeLimit"),
+      lobbyName: formData.get("lobbyName"),
       columns: columns
     }
 
@@ -91,6 +98,7 @@ const NewGame = () => {
     <form onSubmit={handleSubmit} action="">
       <div className={styles["container"]}>
         <div className={styles["header"]}>
+          <h1>New Game</h1>
           <div className={styles['inputContainer']}>
             <label htmlFor="lobby-name">Lobby Name: </label>
             <input type="text" name="lobby-name" id="lobby-name" />
@@ -99,8 +107,12 @@ const NewGame = () => {
         <div className={styles["content"]}>
           <div className={styles["column"]}>
             <div className={styles['inputContainer']}>
-              <label htmlFor="max-players">Max Players: {maxPlayers}</label>
-              <input value={maxPlayers} onChange={(e) => { setMaxPlayers(e.target.value) }} type="range" min={playerNum.min} max={playerNum.max} name="max-players" id="max-players" />
+              <label htmlFor="maxPlayers">Max Players: {maxPlayers}</label>
+              <input value={maxPlayers} onChange={(e) => { setMaxPlayers(e.target.value) }} type="range" min={playerNum.min} max={playerNum.max} name="maxPlayers" id="maxPlayers" />
+            </div>
+            <div className={styles['inputContainer']}>
+              <label htmlFor="timeLimit">Time Limit: {timeLimit / 1000}</label>
+              <input step={1000} value={timeLimit} onChange={(e) => { setTimeLimit(e.target.value) }} type="range" min={timeLimitNum.min} max={timeLimitNum.max} name="timeLimit" id="timeLimit" />
             </div>
           </div>
           <div className={styles["column"]}>
@@ -115,12 +127,14 @@ const NewGame = () => {
                   columns.forEach((val, index) => {
                     els.push(
                       <div key={"gameCol-" + index} className={styles['inputContainer']}>
-                        <div>
-                          <button onClick={(e) => { e.preventDefault(); move(true, index) }}>^</button>
-                          <button onClick={(e) => { e.preventDefault(); move(false, index) }}>V</button>
+                        <div className={styles["columnControls"]}>
+                          <button onClick={(e) => { e.preventDefault(); move(true, index) }}>▲</button>
+                          <button onClick={(e) => { e.preventDefault(); move(false, index) }}>▼</button>
                         </div>
                         <h3>{val}</h3>
-                        <button onClick={(e) => { e.preventDefault(); removeCol(index) }}>-</button>
+                        <div className={styles["columnControls"]}>
+                          <button onClick={(e) => { e.preventDefault(); removeCol(index) }}>ⓧ</button>
+                        </div>
                       </div>
                     )
                   })
@@ -131,9 +145,8 @@ const NewGame = () => {
           </div>
         </div>
         <div className={styles["footer"]}>
-          <div className={styles['inputContainer']}>
-            <input type='submit' value="Create Game" name='submit' />
-          </div>
+            <button type='submit' name='submit'>Create Game</button>
+            <button onClick={(e)=>{e.preventDefault(); onClose()}}>Close</button>
         </div>
       </div>
     </form>
