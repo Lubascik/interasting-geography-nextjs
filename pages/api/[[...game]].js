@@ -117,10 +117,21 @@ export default function SocketHandler(req, res) {
   }
 
   if (req.method === "GET") {
-    // const { io } = req.query;
+    const { game } = req.query;
 
-    // const selectedGame = g_GameManager.getGame(io[1]);
-    res.status(200).json(selectedGame?.getAsJSON() || {});
+    if(!game || !game[0]) {
+      res.status(400);
+      res.end();
+    return
+    }
+
+    const selectedGame = g_GameManager.getGame(game[0]);
+    if(selectedGame) {
+      console.log(selectedGame);
+      res.status(200).json({lobbyName: selectedGame.getAsJSON().lobbyName});
+    } else {
+      res.status(204);
+    }
     res.end();
     return;
   }

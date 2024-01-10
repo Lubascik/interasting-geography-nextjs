@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import * as React from "react";
 import GameMain from "../components/GameMain";
 import LoadingScreen from "../components/LoadingScreen";
 import { useEffect, useState } from 'react'
@@ -14,7 +14,7 @@ let socket;
  * @returns {React.Component}
  */
 const game = ({ params }) => {
-    const [lang, setLang] = useState("en");
+    // const [lang, setLang] = useState("en");
     const [isConnected, setIsConnected] = useState(false)
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState(null);
@@ -25,12 +25,23 @@ const game = ({ params }) => {
 
     let socketInitializing = false;
 
-    let gameID
+    const v4 = new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i);
+
+    const languages = ["sr", "en"]
+    let lang = "en";
+    let gameID;
     if (params.game) {
         if (params.game[1]) {
-            gameID = decodeURI(params.game[1])
-        } else if (params.game[0]) {
-            gameID = params.game[0]
+            if (v4.test(params.game[1])) {
+                gameID = decodeURI(params.game[1])
+            }
+        }
+        if (params.game[0]) {
+            if (v4.test(params.game[0])) {
+                gameID = decodeURI(params.game[1])
+            } else if (languages.includes(params.game[0])) {
+                lang = params.game[0]
+            }
         }
     }
 
@@ -38,10 +49,6 @@ const game = ({ params }) => {
         if (gameID && !socketInitializing) {
             socketInitializer(cookie)
             setIsLoading(true);
-            if (params.game[1]) {
-                // If we have a second param assume the first one is lang
-                setLang(params.game[0])
-            }
         } else {
             setIsLoading(false);
         }

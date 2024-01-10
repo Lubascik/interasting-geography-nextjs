@@ -52,6 +52,7 @@ export default class Game {
     this.id = gameID;
     this.timeLimit = params.timeLimit
     this.maxPlayers = params.maxPlayers
+    this.lobbyName = params.lobbyName
     this.columns = params.columns;
     if (params.allowedLetterList) {
       this.allowedLetterList = params.allowedLetterList;
@@ -87,6 +88,7 @@ export default class Game {
   getAsJSON() {
     return {
       id: this.id,
+      lobbyName: this.lobbyName,
       currentLetter: this.currentLetter,
       columns: this.columns,
       round: this.round,

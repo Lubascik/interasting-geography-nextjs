@@ -10,9 +10,9 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
 
   let currentData = null
   if (!cookieUUID) {
-      currentData = playerData[0]
+    currentData = playerData[0]
   } else {
-      currentData = playerData.filter(player => player.uuid === cookieUUID)[0]
+    currentData = playerData.filter(player => player.uuid === cookieUUID)[0]
   }
 
   const setColumnValue = (id, value) => {
@@ -29,15 +29,15 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
     socket.emit("add-row", { uuid: currentData.uuid, values: vals, letter: gameData.letter }, (data) => {
       // setGameData(data.gameData)
       setShowInput(false);
-      if(data) {
+      if (data) {
         setPlayerData(data)
       }
     });
   }
 
   const [submit, setSubmit] = useState(false);
-  useEffect(()=>{
-    if(showInput && submit) {
+  useEffect(() => {
+    if (showInput && submit) {
       onSubmitAnswers();
     }
   }, [submit])
@@ -46,14 +46,14 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
     setSubmit(true)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     socket.on("round-end", handleRoundEnd)
-    return ()=>{
+    return () => {
       socket.off("round-end", handleRoundEnd)
     }
-  },[])
+  }, [])
 
-  
+
 
   useEffect(() => {
     if (gameData.gameState !== 0) {
@@ -64,20 +64,20 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
       setFinished(true)
     }
   }, [gameData])
-  
+
   function handleNextField(id) {
     let index;
     for (let i = 0; i < gameData.columns.length; i++) {
-      if(gameData.columns[i].id === id) {
+      if (gameData.columns[i].id === id) {
         index = i;
         break;
       }
     }
 
-    if(!gameData.columns[index+1]) {
+    if (!gameData.columns[index + 1]) {
       document.getElementById("submit-input").focus()
     } else {
-      document.getElementById(gameData.columns[index+1].id + "-input").focus()
+      document.getElementById(gameData.columns[index + 1].id + "-input").focus()
     }
   }
 
@@ -142,7 +142,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
             }
             {
               showInput &&
-              <button id="submit-input" key={"submitButton"} onClick={() => { onSubmitAnswers() }} className={styles["column-button"]} style={{backgroundColor: color, color: "white"}}>Submit</button>
+              <button id="submit-input" key={"submitButton"} onClick={() => { onSubmitAnswers() }} className={styles["column-button"]} style={{ backgroundColor: color, color: "white" }}>Submit</button>
             }
           </div>
         </div>

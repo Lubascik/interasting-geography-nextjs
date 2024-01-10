@@ -18,26 +18,24 @@ const GameHome = ({ lang }) => {
         setJoin(true)
     }
 
+    const logo = {
+        en: { image: logoEN, alt: "Interesting Geography" },
+        sr: { image: logoSRB, alt: "Zanimljiva Geografija" }
+    }
+
     return (
         <>
             {
                 newGame &&
                 <div className={styles["modal"]}>
-                    <NewGame onClose={() => { setNewGame(false) }}></NewGame>
+                    <NewGame onClose={() => { setNewGame(false) }} lang={lang}></NewGame>
                 </div>
             }
             <div className={styles["container"]}>
                 <div className={styles["menu"]}>
                     {/* <h1 className={styles["title"]}>Interesting Geography</h1> */}
                     <div className={styles["logo"]}>
-                        {
-                            lang === "srb" &&
-                            <Image src={logoSRB} alt="Interesting Geography"></Image>
-                        }
-                        {
-                            (!lang || lang === "en") &&
-                            <Image src={logoEN} alt="Interesting Geography"></Image>
-                        }
+                        <Image src={logo[lang].image} alt={logo[lang].alt}></Image>
                     </div>
                     <div className={styles["button-container"]}>
                         <button onClick={handleNewGame} className={styles["button"]}>New Game</button>

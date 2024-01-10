@@ -2,15 +2,15 @@ import React, { useState } from 'react'
 import styles from "@styles/NewGame.module.sass"
 import { createGameRedirect } from './actions'
 
-const NewGame = ({onClose}) => {
+const NewGame = ({ onClose, lang }) => {
   const playerNum = {
     min: 2,
     max: 8
   }
 
   const timeLimitNum = {
-    min: 10*1000,
-    max: 60*1000
+    min: 10 * 1000,
+    max: 60 * 1000
   }
   const [maxPlayers, setMaxPlayers] = useState(playerNum.max)
   const [timeLimit, setTimeLimit] = useState(timeLimitNum.max)
@@ -38,7 +38,7 @@ const NewGame = ({onClose}) => {
 
     const gameID = await response.json();
 
-    createGameRedirect(gameID)
+    createGameRedirect(gameID, lang)
     // redirect("/en/"+JsonResponse)
     // console.log(JsonResponse);
 
@@ -100,8 +100,8 @@ const NewGame = ({onClose}) => {
         <div className={styles["header"]}>
           <h1>New Game</h1>
           <div className={styles['inputContainer']}>
-            <label htmlFor="lobby-name">Lobby Name: </label>
-            <input type="text" name="lobby-name" id="lobby-name" />
+            <label htmlFor="lobbyName">Lobby Name: </label>
+            <input type="text" name="lobbyName" id="lobbyName" />
           </div>
         </div>
         <div className={styles["content"]}>
@@ -145,8 +145,8 @@ const NewGame = ({onClose}) => {
           </div>
         </div>
         <div className={styles["footer"]}>
-            <button type='submit' name='submit'>Create Game</button>
-            <button onClick={(e)=>{e.preventDefault(); onClose()}}>Close</button>
+          <button type='submit' name='submit'>Create Game</button>
+          <button onClick={(e) => { e.preventDefault(); onClose() }}>Close</button>
         </div>
       </div>
     </form>

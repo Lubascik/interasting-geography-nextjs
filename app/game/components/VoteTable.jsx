@@ -61,7 +61,7 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
             </div>
             <div className={styles["column-content"]}>
               {playerData.map((player, playerIndex) => {
-                if(player.uuid === cookieUUID) {
+                if (player.uuid === cookieUUID) {
                   myIndex = playerIndex
                 }
                 return player.rows
@@ -113,10 +113,10 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                 .filter((row) => row.round === gameData.round)
                 .map((row, index) => {
                   const resultCol = row.columns.filter((col) => col.id === "results")[0];
-                  return <VoteCell noVote key={"results-column-" + player.uuid} data={resultCol ? resultCol.data : { text: "", points: null }} headerColor={player.uuid !== cookieUUID ? headerColors[playerIndex] : undefined} backgroundColor={backgroundColors[playerIndex]} />;
+                  return <VoteCell showPoints noVote key={"results-column-" + player.uuid} data={resultCol ? resultCol.data : { text: "", points: null }} headerColor={player.uuid !== cookieUUID ? headerColors[playerIndex] : undefined} backgroundColor={backgroundColors[playerIndex]} />;
                 });
             })}
-            <VoteCell noVote key={"results-column-myResults"} headerColor={color} backgroundColor={backgroundColors[myIndex]} data={currentPlayerColumns.filter((col) => col.id === "results")[0]?.data} />
+            <VoteCell showPoints noVote key={"results-column-myResults"} headerColor={color} backgroundColor={backgroundColors[myIndex]} data={currentPlayerColumns.filter((col) => col.id === "results")[0]?.data} />
           </div>
         </div>
       )}

@@ -3,8 +3,8 @@
 import { redirect } from "next/navigation";
 import { cookies } from 'next/headers'
 
-export async function createGameRedirect(gameID) {
-  redirect(`/game/en/${gameID}`);
+export async function createGameRedirect(gameID, lang) {
+  redirect(`/game/${lang ? lang : "en"}/${gameID}`);
 }
 
 export async function setPlayerCookie(playerData) {

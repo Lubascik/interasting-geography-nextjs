@@ -17,12 +17,7 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
     }
 
     useEffect(() => {
-        const body = document.querySelector("body")
-        const html = document.querySelector("html")
-        body.style.height = "100%"
-        body.style.overflowY = "hidden"
-        html.style.height = "100%"
-        html.style.overflowY = "hidden"
+
         function onFocus() {
             if (document.visibilityState === 'visible') {
                 socket.emit("active")
@@ -39,6 +34,12 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
     }, [])
 
     useEffect(() => {
+        const body = document.querySelector("body")
+        const html = document.querySelector("html")
+        body.style.height = "100%"
+        body.style.overflowY = "hidden"
+        html.style.height = "100%"
+        html.style.overflowY = "hidden"
         if (gameData.gameState === 1) {
             setShowInput(true)
         }
