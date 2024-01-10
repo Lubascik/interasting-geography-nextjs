@@ -37,8 +37,8 @@ export async function generateMetadata({ params }, parent) {
 
     const images =
     {
-        en: "ogImageEN.svg",
-        sr: "ogImageSR.svg"
+        en: "ogImageEN.png",
+        sr: "ogImageSR.png"
     }
 
     const title =
