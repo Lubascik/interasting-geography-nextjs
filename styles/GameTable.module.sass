@@ -2,13 +2,22 @@
 @import ./CellInput.module
 @import ./Cell.module
 
+@keyframes flash
+    0%
+        filter: drop-shadow(0px 10px 5px rgba(130, 0, 0, .5 ))
+    100%
+        filter: drop-shadow(0px 10px 5px rgba(130, 0, 0, 0 ))
+
 .columns
     display: flex
     // flex-direction: row
     flex-flow: row nowrap
     overflow-y: auto
+    // overflow-x: hidden
     height: 100%
     min-width: 100%
+.flashing
+    animation: flash 700ms linear 0s
 
 .column
     min-width: 200px

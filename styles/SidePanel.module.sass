@@ -136,3 +136,13 @@ $side-panel-spacing: 10px
 
 .side-empty
     height: 0
+
+@keyframes flash
+    0%
+        background-color: rgba(130, 0, 0, .5 )
+
+    100%
+        background-color: #576574
+
+.flashing
+    animation: flash 700ms linear 0s

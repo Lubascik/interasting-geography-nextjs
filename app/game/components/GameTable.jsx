@@ -81,6 +81,24 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
     }
   }
 
+  const [flashing, setFlashing] = useState(false)
+
+  function handleOnTimeTick(time) {
+    if (time < 20000) {
+      setFlashing(true)
+      setTimeout(() => {
+        setFlashing(false);
+      }, 700);
+    }
+  }
+
+  useEffect(() => {
+    socket.on("time-tick", handleOnTimeTick);
+    return () => {
+      socket.off("time-tick", handleOnTimeTick);
+    };
+  }, []);
+
   return (
     <>
       {
@@ -96,7 +114,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
           <h1 style={{ margin: "auto" }}>Waiting for host to start the game...</h1>
         </div>
       }
-      <div className={styles["columns"]}>
+      <div className={styles["columns"] + (flashing ? " " + styles["flashing"] : "")}>
         {
           gameData.columns.map((column, colIndex) => {
             let nIndex = 0;

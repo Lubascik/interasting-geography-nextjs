@@ -7,9 +7,12 @@ import NewPlayer from './NewPlayer';
 import { useCookies } from 'next-client-cookies';
 
 const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, currentUUID, setCurrentUUID }) => {
-    const [showInput, setShowInput] = useState(gameData.gameState === 1)
     const cookies = useCookies();
     const cookieUUID = cookies.get("player-uuid")
+    const myPlayer = playerData.filter(player => player.uuid === cookieUUID)[0]
+    const [showInput, setShowInput] = useState(gameData.gameState === 1 && (myPlayer && myPlayer.lastSubmitedRound !== gameData.round))
+
+    console.log(playerData);
 
     function handleOnStartVote(data) {
         setPlayerData(data.playerData);
@@ -40,7 +43,7 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
         body.style.overflowY = "hidden"
         html.style.height = "100%"
         html.style.overflowY = "hidden"
-        if (gameData.gameState === 1) {
+        if (gameData.gameState === 1 && (myPlayer && myPlayer.lastSubmitedRound !== gameData.round)) {
             setShowInput(true)
         }
     }, [gameData])

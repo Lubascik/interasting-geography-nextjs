@@ -3,6 +3,8 @@ import GameTimer from "./GameTimer";
 import styles from "@styles/SidePanel.module.sass";
 import { useRouter } from "next/navigation";
 import { useCookies } from "next-client-cookies";
+import Coffee from "./buymecoffe";
+import coffeestyles from '@styles/Coffee.module.sass';
 
 const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
   const [chat, setChat] = useState([]);
@@ -23,9 +25,21 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
     setTime(data.gameData.time);
   }
 
+  const [flashing, setFlashing] = useState(false)
+
   function handleOnTimeTick(data) {
     setTime(data);
   }
+
+  useEffect(() => {
+    if (gameData.gameState === 1 && time < 20000) {
+      setFlashing(true)
+      setTimeout(() => {
+        setFlashing(false);
+      }, 700);
+    }
+  }, [time])
+
 
   useEffect(() => {
     socket.on("start-round", handleOnStartRound);
@@ -55,7 +69,7 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
 
   return (
     <div className={styles["side-panel"]}>
-      <GameTimer {...{ time }}></GameTimer>
+      <GameTimer className={flashing ? styles["flashing"] : ""} {...{ time }}></GameTimer>
       <div className={styles["round-container"]}>
         <h1 className={styles["round-text"]}>Round: {gameData.round}</h1>
         <h1 className={styles["round-text"]}>Current Letter: {gameData.currentLetter}</h1>
@@ -90,6 +104,7 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
         <button className={styles["side-button"]} style={{ background: color }}>
           Invite
         </button>
+        <Coffee {...{ color }} className={coffeestyles["coffee"]}></Coffee>
         <button
           onClick={() => {
             _exitGame();

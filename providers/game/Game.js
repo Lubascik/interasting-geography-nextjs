@@ -50,7 +50,7 @@ export default class Game {
    */
   constructor(gameID, params) {
     this.id = gameID;
-    this.timeLimit = params.timeLimit
+    this.timeLimit = parseInt(params.timeLimit)
     this.maxPlayers = params.maxPlayers
     this.lobbyName = params.lobbyName
     this.columns = params.columns;
