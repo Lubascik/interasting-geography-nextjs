@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styles from "@styles/NewGame.module.sass"
-import { createGameRedirect } from './actions'
+import { createGameRedirect } from './actions/createGameRedirect'
 
 const NewGame = ({ onClose, lang }) => {
   const playerNum = {

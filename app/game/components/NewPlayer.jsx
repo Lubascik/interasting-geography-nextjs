@@ -1,6 +1,6 @@
 import styles from "@styles/NewPlayer.module.sass";
 import React from "react";
-import { setPlayerCookie } from "./actions";
+import { setPlayerCookie } from "./actions/setPlayerCookie";
 
 const NewPlayer = ({ socket, gameData, setCurrentUUID }) => {
   function handleSubmit(e) {

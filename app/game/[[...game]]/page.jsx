@@ -4,7 +4,7 @@ import GameMain from "../components/GameMain";
 import LoadingScreen from "../components/LoadingScreen";
 import { useEffect, useState } from 'react'
 import { useCookies } from 'next-client-cookies';
-import { setPlayerCookie } from "../components/actions"
+import { setPlayerCookie } from "../components/actions/setPlayerCookie"
 import GameHome from "../components/GameHome";
 import io from "socket.io-client";
 

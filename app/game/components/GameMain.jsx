@@ -12,8 +12,6 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
     const myPlayer = playerData.filter(player => player.uuid === cookieUUID)[0]
     const [showInput, setShowInput] = useState(gameData.gameState === 1 && (myPlayer && myPlayer.lastSubmitedRound !== gameData.round))
 
-    console.log(playerData);
-
     function handleOnStartVote(data) {
         setPlayerData(data.playerData);
         setGameData(data.gameData);
