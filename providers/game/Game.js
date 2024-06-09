@@ -20,6 +20,7 @@ export default class Game {
   letters = [];
 
   allowedLetterList = null;
+  /** @type {Array<Player>} */
   players = {};
   maxPlayers = 2;
   ownerID = "";
@@ -99,6 +100,10 @@ export default class Game {
   }
 
   setPoints(uuid, votes) {
+    if (this.gameState !== Game.GameState.voting || votes.length < 1) {
+      return;
+    }
+
     const player = this.players[uuid];
     if (player) {
       player.setPoints(votes);
@@ -174,7 +179,7 @@ export default class Game {
    *
    * @param {number} time the amount of time in ms that the timer will tick for and after which it will call the callback function
    * @param {Function} callback
-   * @returns
+   * @returns {Promise | undefined}
    */
   startTimer(time, callback) {
     if (this.timerRunning) {
