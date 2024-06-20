@@ -57,7 +57,12 @@ const game = ({ params }) => {
 
     const socketInitializer = async (cookie) => {
         socketInitializing = true;
-        await fetch('/api'); // Ping to create a socket server
+        try {
+            await fetch('/api'); // Ping to create a socket server
+        } catch (error) {
+            // TODO handle error
+            console.log(error);
+        }
         socket = io(undefined, {
             query: {
                 gameID,
