@@ -90,10 +90,8 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
 
 
     const onCopyLink = () => {
-        if (mobileCheck()) {
-            if (navigator?.share && navigator.canShare()) {
-                navigator.share({ url: window.location })
-            }
+        if (mobileCheck() && navigator?.share) {
+            navigator.share({ url: window.location });
         } else
             if (navigator?.clipboard?.writeText) {
                 setCopyLinkActive(true);
