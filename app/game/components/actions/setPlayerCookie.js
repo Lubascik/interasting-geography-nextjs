@@ -1,9 +1,9 @@
 "use server";
 
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers";
 
 export async function setPlayerCookie(playerData) {
-    const options = { expires: Date.now() + 1000 * 60 * 60 * 24 * 365 }
-    cookies().set('player-uuid', playerData.uuid, options)
-    cookies().set('player-name', playerData.name, options)
+	const options = { expires: Date.now() + 1000 * 60 * 60 * 24 * 365 };
+	cookies().set("player-uuid", playerData.uuid, options);
+	cookies().set("player-name", playerData.name, options);
 }

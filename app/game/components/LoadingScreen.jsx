@@ -35,7 +35,7 @@ const LoadingScreen = () => {
         <div className={styles["loadingScreen-loadingBar"]}>
           <div
             className={styles["loadingScreen-progressBar"]}
-            style={{ width: progress + "%" }}
+            style={{ width: `${progress}%` }}
           >
             <p style={{ color: "black", textAlign: "center" }}>{progress}%</p>
           </div>

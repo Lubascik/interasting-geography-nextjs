@@ -22,7 +22,7 @@ export async function generateMetadata({ params }, parent) {
         }
     }
 
-    const response = await fetch(process.env.baseURL + "/api" + encodeURI(gameID ? "/" + gameID : ""), {
+    const response = await fetch(`${process.env.baseURL}/api${encodeURI(gameID ? `/${gameID}` : "")}`, {
         method: "GET",
         headers: {
             "content-type": "application/json"
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }, parent) {
         metadataBase: process.env.baseURL,
         openGraph: {
             description: description[lang],
-            url: process.env.baseURL + '/game/' + (lang ? lang + "/" : "") + (gameID ? gameID : ""),
+            url: `${process.env.baseURL}/game/${lang ? `${lang}/` : ""}${gameID ? gameID : ""}`,
             siteName: gameName ? gameName.lobbyName : "Join your friends!",
             images: [
                 {

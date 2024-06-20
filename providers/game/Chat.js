@@ -1,14 +1,12 @@
 "use server";
 export default class Chat {
-  chats = [];
+	messages = [];
 
-  constructor() {}
+	addMessage(playerID, content) {
+		this.messages.push({ playerID, content });
+	}
 
-  addMessage(playerID, content) {
-    this.chats.push({ playerID, content });
-  }
-
-  getMessages() {
-    return this.chats;
-  }
+	getMessages() {
+		return this.messages;
+	}
 }

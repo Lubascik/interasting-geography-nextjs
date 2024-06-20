@@ -96,27 +96,27 @@ const NewGame = ({ onClose, lang }) => {
 
   return (
     <form onSubmit={handleSubmit} action="">
-      <div className={styles["container"]}>
-        <div className={styles["header"]}>
+      <div className={styles.container}>
+        <div className={styles.header}>
           <h1>New Game</h1>
-          <div className={styles['inputContainer']}>
+          <div className={styles.inputContainer}>
             <label htmlFor="lobbyName">Lobby Name: </label>
             <input type="text" name="lobbyName" id="lobbyName" />
           </div>
         </div>
-        <div className={styles["content"]}>
-          <div className={styles["column"]}>
-            <div className={styles['inputContainer']}>
+        <div className={styles.content}>
+          <div className={styles.column}>
+            <div className={styles.inputContainer}>
               <label htmlFor="maxPlayers">Max Players: {maxPlayers}</label>
               <input value={maxPlayers} onChange={(e) => { setMaxPlayers(e.target.value) }} type="range" min={playerNum.min} max={playerNum.max} name="maxPlayers" id="maxPlayers" />
             </div>
-            <div className={styles['inputContainer']}>
+            <div className={styles.inputContainer}>
               <label htmlFor="timeLimit">Time Limit: {timeLimit / 1000}</label>
               <input step={1000} value={timeLimit} onChange={(e) => { setTimeLimit(e.target.value) }} type="range" min={timeLimitNum.min} max={timeLimitNum.max} name="timeLimit" id="timeLimit" />
             </div>
           </div>
-          <div className={styles["column"]}>
-            <div className={styles['inputContainer']}>
+          <div className={styles.column}>
+            <div className={styles.inputContainer}>
               <label htmlFor="add-column">Add Column</label>
               <input onChange={limitLength} onKeyDown={addColumnKeyDown} type="text" />
             </div>
@@ -126,14 +126,15 @@ const NewGame = ({ onClose, lang }) => {
                   const els = []
                   columns.forEach((val, index) => {
                     els.push(
-                      <div key={"gameCol-" + index} className={styles['inputContainer']}>
-                        <div className={styles["columnControls"]}>
-                          <button onClick={(e) => { e.preventDefault(); move(true, index) }}>▲</button>
-                          <button onClick={(e) => { e.preventDefault(); move(false, index) }}>▼</button>
+                      <div key={`gameCol-${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                        index}`} className={styles.inputContainer}>
+                        <div className={styles.columnControls}>
+                          <button type='button' onClick={(e) => { e.preventDefault(); move(true, index) }}>▲</button>
+                          <button type='button' onClick={(e) => { e.preventDefault(); move(false, index) }}>▼</button>
                         </div>
                         <h3>{val}</h3>
-                        <div className={styles["columnControls"]}>
-                          <button onClick={(e) => { e.preventDefault(); removeCol(index) }}>ⓧ</button>
+                        <div className={styles.columnControls}>
+                          <button type='button' onClick={(e) => { e.preventDefault(); removeCol(index) }}>ⓧ</button>
                         </div>
                       </div>
                     )
@@ -144,9 +145,9 @@ const NewGame = ({ onClose, lang }) => {
             </div>
           </div>
         </div>
-        <div className={styles["footer"]}>
+        <div className={styles.footer}>
           <button type='submit' name='submit'>Create Game</button>
-          <button onClick={(e) => { e.preventDefault(); onClose() }}>Close</button>
+          <button type='button' onClick={(e) => { e.preventDefault(); onClose() }}>Close</button>
         </div>
       </div>
     </form>

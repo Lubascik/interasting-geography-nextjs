@@ -21,7 +21,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
   }
 
   const onSubmitAnswers = () => {
-    let vals = []
+    const vals = []
     columnValues.forEach((val, key) => {
       vals.push({ id: key, data: { text: val, points: null } })
     })
@@ -36,6 +36,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
   }
 
   const [submit, setSubmit] = useState(false);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (showInput && submit) {
       onSubmitAnswers();
@@ -46,6 +47,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
     setSubmit(true)
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     socket.on("round-end", handleRoundEnd)
     return () => {
@@ -77,7 +79,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
     if (!gameData.columns[index + 1]) {
       document.getElementById("submit-input").focus()
     } else {
-      document.getElementById(gameData.columns[index + 1].id + "-input").focus()
+      document.getElementById(`${gameData.columns[index + 1].id}-input`).focus()
     }
   }
 
@@ -92,6 +94,7 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
     }
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     socket.on("time-tick", handleOnTimeTick);
     return () => {
@@ -114,12 +117,12 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
           <h1 style={{ margin: "auto" }}>Waiting for host to start the game...</h1>
         </div>
       }
-      <div className={styles["columns"] + (flashing ? " " + styles["flashing"] : "")}>
+      <div className={styles.columns + (flashing ? ` ${styles.flashing}` : "")}>
         {
           gameData.columns.map((column, colIndex) => {
             let nIndex = 0;
             return (
-              <div key={column.id} className={styles["column"]}>
+              <div key={column.id} className={styles.column}>
                 <div className={styles["column-header"]} style={{ background: color }}>
                   <h1 className={styles["column-title"]}>{column.name}</h1>
                 </div>
@@ -129,24 +132,23 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                       const cols = row.columns.filter(columnOfRow => columnOfRow.id === column.id)
                       if (cols.length >= 1) {
                         return cols.map((columnOfRow) => {
-                          return <Cell key={column.id + "-cell-" + rowIndex + "-" + colIndex} data={columnOfRow.data} />
+                          return <Cell key={`${column.id}-cell-${rowIndex}-${colIndex}`} data={columnOfRow.data} />
                         })
-                      } else {
-                        nIndex++;
-                        return <Cell key={column.id + "-cell-" + nIndex + "-0"} data={{ text: "", points: 0 }} />
                       }
+                      nIndex++;
+                      return <Cell key={`${column.id}-cell-${nIndex}-0`} data={{ text: "", points: 0 }} />
                     })
                   }
                   {
                     showInput &&
-                    <CellInput key={column.id + "-input"} id={column.id} setValue={setColumnValue} nextField={handleNextField}></CellInput>
+                    <CellInput key={`${column.id}-input`} id={column.id} setValue={setColumnValue} nextField={handleNextField} />
                   }
                 </div>
               </div>
             )
           })
         }
-        <div key={"column-results"} className={styles["column"]}>
+        <div key={"column-results"} className={styles.column}>
           <div className={styles["column-header"]} style={{ background: color }}>
             <h1 className={styles["column-title"]}>Results</h1>
           </div>
@@ -154,13 +156,14 @@ const GameTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
             {
               currentData?.rows.map((row, index) => {
                 const resultCol = row.columns.filter(col => col.id === "results")[0]
-                return <Cell key={"row" + index} data={resultCol ? resultCol.data : { text: "", points: null }} />
+                return <Cell key={`row${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                  index}`} data={resultCol ? resultCol.data : { text: "", points: null }} />
                 // return <p>{row.columns.filter(col => col.id === "results")[0].data.points}</p>
               })
             }
             {
               showInput &&
-              <button id="submit-input" key={"submitButton"} onClick={() => { onSubmitAnswers() }} className={styles["column-button"]} style={{ backgroundColor: color, color: "white" }}>Submit</button>
+              <button type="button" id="submit-input" key={"submitButton"} onClick={() => { onSubmitAnswers() }} className={styles["column-button"]} style={{ backgroundColor: color, color: "white" }}>Submit</button>
             }
           </div>
         </div>

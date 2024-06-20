@@ -6,7 +6,7 @@ import { useCookies } from "next-client-cookies";
 import Coffee from "./buymecoffe";
 import coffeestyles from '@styles/Coffee.module.sass';
 
-const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
+const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color, onCopyLink }) => {
   const [chat, setChat] = useState([]);
   const [time, setTime] = useState(gameData.time);
   const router = useRouter();
@@ -31,6 +31,7 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
     setTime(data);
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (gameData.gameState === 1 && time < 20000) {
       setFlashing(true)
@@ -41,6 +42,7 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
   }, [time])
 
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     socket.on("start-round", handleOnStartRound);
     socket.on("time-tick", handleOnTimeTick);
@@ -54,22 +56,19 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
     return (
       <div
         key={player.uuid}
-        onClick={() => {
-          /*setCurrentUUID(player.uuid)*/
-        }}
-        className={styles["player"]}>
+        className={styles.player}>
         <div className={styles["name-container"]}>
-          <span className={`${styles["status"]} ${styles[player.online ? (player.active ? "active" : "inactive") : "offline"]}`} />
-          <h3 className={styles["name"]}>{player.name}</h3>
+          <span className={`${styles.status} ${styles[player.online ? (player.active ? "active" : "inactive") : "offline"]}`} />
+          <h3 className={styles.name}>{player.name}</h3>
         </div>
-        <h3 className={styles["points"]}>{player.points}</h3>
+        <h3 className={styles.points}>{player.points}</h3>
       </div>
     );
   };
 
   return (
     <div className={styles["side-panel"]}>
-      <GameTimer className={flashing ? styles["flashing"] : ""} {...{ time }}></GameTimer>
+      <GameTimer className={flashing ? styles.flashing : ""} {...{ time }} />
       <div className={styles["round-container"]}>
         <h1 className={styles["round-text"]}>Round: {gameData.round}</h1>
         <h1 className={styles["round-text"]}>Current Letter: {gameData.currentLetter}</h1>
@@ -92,6 +91,7 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
       </div>
       <div className={styles["side-button-container"]}>
         {gameData.gameState === 0 && gameData.owner === playerUUID && (
+          // biome-ignore lint/a11y/useButtonType: <explanation>
           <button
             onClick={() => {
               startGame();
@@ -101,10 +101,12 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color }) => {
             Start Game!
           </button>
         )}
-        <button className={styles["side-button"]} style={{ background: color }}>
+        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+        <button onClick={navigator?.share ? () => { navigator.share(window.location) } : onCopyLink} className={styles["side-button"]} style={{ background: color }}>
           Invite
         </button>
-        <Coffee {...{ color }} className={coffeestyles["coffee"]}></Coffee>
+        <Coffee {...{ color }} className={coffeestyles.coffee} />
+        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
         <button
           onClick={() => {
             _exitGame();

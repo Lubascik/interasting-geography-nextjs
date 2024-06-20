@@ -22,7 +22,7 @@ const NewPlayer = ({ socket, gameData, setCurrentUUID }) => {
         <h3>Welcome! Please give us your name so others can identify you during the game.</h3>
         <form onSubmit={handleSubmit}>
           <label htmlFor='playerName'>Name:</label>
-          <input className={styles["error"]} type='text' id='playerName' name='playerName' />
+          <input className={styles.error} type='text' id='playerName' name='playerName' />
           <button type='submit'>Start Playing!</button>
           {/* <label htmlFor="color">Color:</label>
                     <select name="color" id="color">

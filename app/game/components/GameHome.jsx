@@ -27,18 +27,18 @@ const GameHome = ({ lang }) => {
         <>
             {
                 newGame &&
-                <div className={styles["modal"]}>
-                    <NewGame onClose={() => { setNewGame(false) }} lang={lang}></NewGame>
+                <div className={styles.modal}>
+                    <NewGame onClose={() => { setNewGame(false) }} lang={lang} />
                 </div>
             }
-            <div className={styles["container"]}>
-                <div className={styles["menu"]}>
+            <div className={styles.container}>
+                <div className={styles.menu}>
                     {/* <h1 className={styles["title"]}>Interesting Geography</h1> */}
-                    <div className={styles["logo"]}>
-                        <Image src={logo[lang].image} alt={logo[lang].alt}></Image>
+                    <div className={styles.logo}>
+                        <Image src={logo[lang].image} alt={logo[lang].alt} />
                     </div>
                     <div className={styles["button-container"]}>
-                        <button onClick={handleNewGame} className={styles["button"]}>New Game</button>
+                        <button type="button" onClick={handleNewGame} className={styles.button}>New Game</button>
                         {/* <button onClick={handleJoin} className={styles["button"]}>Join</button> */}
                     </div>
                 </div>

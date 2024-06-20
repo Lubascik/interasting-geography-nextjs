@@ -11,12 +11,14 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
     const cookieUUID = cookies.get("player-uuid")
     const myPlayer = playerData.filter(player => player.uuid === cookieUUID)[0]
     const [showInput, setShowInput] = useState(gameData.gameState === 1 && (myPlayer && myPlayer.lastSubmitedRound !== gameData.round))
+    const [copyLinkActive, setCopyLinkActive] = useState(false)
 
     function handleOnStartVote(data) {
         setPlayerData(data.playerData);
         setGameData(data.gameData);
     }
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
 
         function onFocus() {
@@ -34,6 +36,7 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
         }
     }, [])
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         const body = document.querySelector("body")
         const html = document.querySelector("html")
@@ -70,22 +73,44 @@ const GameMain = ({ gameData, setGameData, playerData, setPlayerData, socket, cu
         return colors[index]
     })()
 
+    useEffect(() => {
+        if (copyLinkActive) {
+            setTimeout(() => {
+                setCopyLinkActive(false);
+            }, 1400);
+        }
+
+    }, [copyLinkActive])
+
+
+    const onCopyLink = () => {
+        if (navigator?.clipboard?.writeText) {
+            setCopyLinkActive(true);
+            navigator.clipboard.writeText(window.location);
+        }
+    }
+
     return (
-        <div className={styles["main"]}>
+        <div className={styles.main}>
             {
-                !currentUUID && <NewPlayer {...{ socket, gameData, setCurrentUUID }}></NewPlayer>
+                !currentUUID && <NewPlayer {...{ socket, gameData, setCurrentUUID }} />
             }
-            <div className={styles["container"]}>
-                <SidePanel {...{ setCurrentUUID, gameData, playerData, socket, color }}></SidePanel>
-                <div className={styles["main-panel"]} style={{ border: "5px solid " + color }}>
+            <div className={styles.container}>
+                <SidePanel {...{ setCurrentUUID, gameData, playerData, socket, color, onCopyLink }} />
+                <div className={styles["main-panel"]} style={{ border: `5px solid ${color}` }}>
                     {
                         gameData.gameState !== 2 &&
-                        <GameTable {...{ gameData, setGameData, playerData: playerData, setPlayerData, socket, color, showInput, setShowInput, cookieUUID }}></GameTable>
+                        <GameTable {...{ gameData, setGameData, playerData: playerData, setPlayerData, socket, color, showInput, setShowInput, cookieUUID }} />
                     }
                     {
                         gameData.gameState === 2 &&
-                        <VoteTable {...{ gameData, setGameData, playerData: playerData, setPlayerData, socket, color, showInput, setShowInput, cookieUUID }}></VoteTable>
+                        <VoteTable {...{ gameData, setGameData, playerData: playerData, setPlayerData, socket, color, showInput, setShowInput, cookieUUID }} />
                     }
+                </div>
+            </div>
+            <div className={styles.modal}>
+                <div className={`${styles.copy_link_container} ${copyLinkActive ? styles.copy_active : ""}`}>
+                    <h1 className={styles.copy_link_text}>Coppied Link to Clipboard!</h1>
                 </div>
             </div>
         </div>

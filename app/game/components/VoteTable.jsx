@@ -51,11 +51,11 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
   let myIndex = 0;
 
   return (
-    <div className={styles["columns"]}>
+    <div className={styles.columns}>
       {gameData.columns.map((column, colIndex) => {
         let nIndex = 0;
         return (
-          <div key={column.id} className={styles["column"]}>
+          <div key={column.id} className={styles.column}>
             <div className={styles["column-header"]} style={{ background: color }}>
               <h1 className={styles["column-title"]}>{column.name}</h1>
             </div>
@@ -73,17 +73,16 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                     const cols = row.columns.filter((columnOfRow) => columnOfRow.id === column.id);
                     if (cols.length >= 1) {
                       return cols.map((columnOfRow) => {
-                        return <VoteCell showPoints={allColsSubmited} noVote key={column.id + "-cell-" + rowIndex + "-" + colIndex} {...{ data: columnOfRow.data, headerColor: headerColors[playerIndex], backgroundColor: backgroundColors[playerIndex] }} />;
+                        return <VoteCell showPoints={allColsSubmited} noVote key={`${column.id}-cell-${rowIndex}-${colIndex}`} {...{ data: columnOfRow.data, headerColor: headerColors[playerIndex], backgroundColor: backgroundColors[playerIndex] }} />;
                       });
-                    } else {
-                      nIndex++;
-                      return <VoteCell showPoints={allColsSubmited} noVote key={column.id + "-cell-" + nIndex + "-0"} {...{ headerColor: headerColors[playerIndex], backgroundColor: backgroundColors[playerIndex] }} />;
                     }
+                    nIndex++;
+                    return <VoteCell showPoints={allColsSubmited} noVote key={`${column.id}-cell-${nIndex}-0`} {...{ headerColor: headerColors[playerIndex], backgroundColor: backgroundColors[playerIndex] }} />;
                   });
               })}
               {currentPlayerColumns.length > 0 && (
                 <VoteCell
-                  key={column.id + "-cell-myAnswers-" + colIndex}
+                  key={`${column.id}-cell-myAnswers-${colIndex}`}
                   {...{
                     data: currentPlayerColumns.filter((col) => col.id === column.id)[0]?.data,
                     handleVote,
@@ -93,14 +92,14 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                     showPoints: allColsSubmited,
                     headerColor: color,
                     backgroundColor: backgroundColors[myIndex]
-                  }}></VoteCell>
+                  }} />
               )}
             </div>
           </div>
         );
       })}
       {currentPlayerColumns.length > 0 && currentPlayerColumns.filter((col) => col.id === "results").length > 0 && (
-        <div key={"column-results"} className={styles["column"]}>
+        <div key={"column-results"} className={styles.column}>
           <div className={styles["column-header"]} style={{ background: color }}>
             <h1 className={styles["column-title"]}>Results</h1>
           </div>
@@ -113,7 +112,7 @@ const VoteTable = ({ gameData, setGameData, playerData, setPlayerData, socket, c
                 .filter((row) => row.round === gameData.round)
                 .map((row, index) => {
                   const resultCol = row.columns.filter((col) => col.id === "results")[0];
-                  return <VoteCell showPoints noVote key={"results-column-" + player.uuid} data={resultCol ? resultCol.data : { text: "", points: null }} headerColor={player.uuid !== cookieUUID ? headerColors[playerIndex] : undefined} backgroundColor={backgroundColors[playerIndex]} />;
+                  return <VoteCell showPoints noVote key={`results-column-${player.uuid}`} data={resultCol ? resultCol.data : { text: "", points: null }} headerColor={player.uuid !== cookieUUID ? headerColors[playerIndex] : undefined} backgroundColor={backgroundColors[playerIndex]} />;
                 });
             })}
             <VoteCell showPoints noVote key={"results-column-myResults"} headerColor={color} backgroundColor={backgroundColors[myIndex]} data={currentPlayerColumns.filter((col) => col.id === "results")[0]?.data} />

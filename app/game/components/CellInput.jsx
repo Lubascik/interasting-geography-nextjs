@@ -12,7 +12,7 @@ export default function CellInput({ id, setValue, nextField }) {
     <div className={styles["input-cell"]}>
       <div style={{ width: "100%", height: "auto" }}>
         <input
-          id={id + "-input"}
+          id={`${id}-input`}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               nextField(id);
@@ -24,7 +24,7 @@ export default function CellInput({ id, setValue, nextField }) {
           onChange={handleChange}
           className={styles["input-cell-input"]}
           type="text"
-        ></input>
+        />
       </div>
     </div>
   );

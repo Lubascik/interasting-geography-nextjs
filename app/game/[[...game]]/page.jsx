@@ -45,6 +45,7 @@ const game = ({ params }) => {
         }
     }
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         if (gameID && !socketInitializing) {
             socketInitializer(cookie)
@@ -106,11 +107,13 @@ const game = ({ params }) => {
     }
 
     if (isLoading) {
-        return <LoadingScreen></LoadingScreen>
+        return <LoadingScreen />
+        // biome-ignore lint/style/noUselessElse: <explanation>
     } else if (gameData && playerData) {
-        return <GameMain {...{ gameData, setGameData, playerData, setPlayerData, socket, currentUUID, setCurrentUUID }}></GameMain>
+        return <GameMain {...{ gameData, setGameData, playerData, setPlayerData, socket, currentUUID, setCurrentUUID }} />
+        // biome-ignore lint/style/noUselessElse: <explanation>
     } else if (!gameData) {
-        return <GameHome {...{ lang }}></GameHome>
+        return <GameHome {...{ lang }} />
     }
 };
 

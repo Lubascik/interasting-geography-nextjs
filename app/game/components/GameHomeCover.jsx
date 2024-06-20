@@ -6,7 +6,7 @@ import Cover from "images/home_cover_2.svg"
 const GameHomeCover = () => {
     return (
         <div>
-            <Cover></Cover>
+            <Cover />
         </div>
     )
 }
