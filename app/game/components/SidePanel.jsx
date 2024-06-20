@@ -102,7 +102,7 @@ const SidePanel = ({ playerData, gameData, setCurrentUUID, socket, color, onCopy
           </button>
         )}
         {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
-        <button onClick={navigator?.share ? () => { navigator.share(window.location) } : onCopyLink} className={styles["side-button"]} style={{ background: color }}>
+        <button onClick={onCopyLink} className={styles["side-button"]} style={{ background: color }}>
           Invite
         </button>
         <Coffee {...{ color }} className={coffeestyles.coffee} />
