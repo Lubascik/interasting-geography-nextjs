@@ -1,4 +1,15 @@
 @import "./vars.module"
+
+@mixin placeholder
+    &:-ms-input-placeholder
+        @content
+    &::-moz-placeholder
+        @content
+    &:-moz-placeholder
+        @content
+    &::-webkit-input-placeholder
+        @content
+
 .newPlayer-main
     position: fixed
     top: 0
@@ -11,16 +22,19 @@
     z-index: 100
 
 .newPlayer-container
+    padding: 1em
     width: 400px
-    background: #4db1f3
+    background: $bg-color
     display: flex
     flex-direction: column
+    border-radius: 15px
     h3
-        padding: 20px
+        padding: 10px
         text-align: center
-        @include text-lg
+        @include text-md
         @include main-font
         font-weight: 700
+        color: white
     form
         display: flex
         flex-direction: column
@@ -35,10 +49,36 @@
             border: none
             outline: none
             height: 30px
+            border-radius: 15px
+            border: 3px solid transparent
+            text-align: center
+            @include main-font
+            @include text-sm
+
+            font-weight: 700
+
             &.error
                 border: 3px solid red
+            @include placeholder
+                text-align: center
+                @include main-font
+                font-weight: 700
+
+        .errorMessage
+            color: red
+            @include main-font
+            @include text-md
+            text-align: center
+            font-weight: 500
+            margin-bottom: 5px
+
         button
             outline: none
             border: none
             margin: 10px 0 0 0
             padding: 5px
+            border-radius: 15px
+            height: 36px
+            @include main-font
+            @include text-sm
+            font-weight: 700
