@@ -1,33 +1,73 @@
 @import "./vars.module"
+@import "~include-media/dist/_include-media"
 
-.container
-    background: $bg-color
+.main
     height: 100vh
+    width: 100%
+    background-color: black
+    overflow-y: hidden
+    background-repeat: no-repeat
+    background-size: cover
+
+.game
+    position: relative
+    height: 100vh
+
     display: flex
     justify-content: center
     align-items: center
-    flex-direction: column
-    h1
-        @include main-font
-        @include text-lg
-        color: white
-        font-weight: 700
+    flex-flow: column
+    background-repeat: no-repeat
+    @include media("<phone")
+        background-size: 700px
+    @include media(">phone", "<=tablet")
+        background-size: 700px
+    @include media(">tablet", "<=desktop")
+        background-size: 900px
+    @include media(">desktop")
+        background-size: 1000px
+        // background-position: 50% 50%
+    background-position: 50% 50%
 
-.button
-    background: $prim-color
-    padding: 10px
+.globe
+    display: flex
+    justify-content: center
+
+.logoContainer
+    margin-top: -6em
+    @include media("<phone")
+        height: 15em
+    @include media(">phone", "<=tablet")
+        height: 15em
+    @include media(">tablet", "<=desktop")
+        height: 18em
+    @include media(">desktop")
+        height: 20em
+    display: flex
+    flex-flow: column
+    align-items: center
+
+.logoImage
+    @include media("<phone")
+        width: 250px
+    @include media(">phone", "<=tablet")
+        width: 250px
+    @include media(">tablet", "<=desktop")
+        width: 350px
+    @include media(">desktop")
+        width: 400px
+
+.startButton
+    width: 150px
+    background: white
+    border: none
+    height: 3em
+    border-radius: 10px 10px
     text-decoration: none
-    margin: 20px
-    border: 3px solid black
-    border-radius: 50px
-    h2
-        @include main-font
-        @include text-md
-        color: white
+    text-align: center
+    color: black
 
-.hero_divide
-    background: rgb(255,255,255)
-    background: -moz-linear-gradient(180deg, rgba(255,255,255,0) 35%, rgba(255,255,255,1) 86%)
-    background: -webkit-linear-gradient(180deg, rgba(255,255,255,0) 35%, rgba(255,255,255,1) 86%)
-    background: linear-gradient(180deg, rgba(255,255,255,0) 35%, rgba(255,255,255,1) 86%)
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff",endColorstr="#ffffff",GradientType=1)
+    &:hover
+        -webkit-box-shadow: 0px 6px 30px 0px rgba(0,0,0,0.2)
+        -moz-box-shadow: 0px 6px 30px 0px rgba(0,0,0,0.2)
+        box-shadow: 0px 6px 30px 0px rgba(0,0,0,0.2)

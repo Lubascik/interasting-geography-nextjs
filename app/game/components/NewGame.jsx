@@ -111,7 +111,7 @@ const NewGame = ({ onClose, lang }) => {
               <input value={maxPlayers} onChange={(e) => { setMaxPlayers(e.target.value) }} type="range" min={playerNum.min} max={playerNum.max} name="maxPlayers" id="maxPlayers" />
             </div>
             <div className={styles.inputContainer}>
-              <label htmlFor="timeLimit">Time Limit: {timeLimit / 1000}</label>
+              <label htmlFor="timeLimit">Time Limit: {timeLimit / 1000}s</label>
               <input step={1000} value={timeLimit} onChange={(e) => { setTimeLimit(e.target.value) }} type="range" min={timeLimitNum.min} max={timeLimitNum.max} name="timeLimit" id="timeLimit" />
             </div>
           </div>
